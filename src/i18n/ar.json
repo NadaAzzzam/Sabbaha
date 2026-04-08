@@ -1,0 +1,86 @@
+{
+  "home": {
+    "title": "حَبّة",
+    "subtitle": "اذكر الله",
+    "addCustom": "أضف ذكرًا مخصصًا",
+    "history": "السجل",
+    "settings": "الإعدادات",
+    "times": "مرة",
+    "free": "حر"
+  },
+  "setup": {
+    "fixedMode": "عد محدد",
+    "freeMode": "عد حر",
+    "count": "العدد",
+    "start": "ابدأ",
+    "back": "رجوع"
+  },
+  "session": {
+    "pause": "إيقاف",
+    "resume": "استمرار",
+    "finish": "إنهاء",
+    "exitTitle": "هل تريد الخروج؟",
+    "exitMessage": "سيتم حفظ جلستك الحالية.",
+    "exitConfirm": "خروج",
+    "exitCancel": "استمرار",
+    "free": "حر"
+  },
+  "summary": {
+    "blessing": "بارك الله في وقتك",
+    "count": "تسبيحة",
+    "duration": "المدة",
+    "minutes": "دقيقة",
+    "seconds": "ثانية",
+    "and": "و",
+    "newDhikr": "تسبيح جديد",
+    "repeat": "نفس الذكر"
+  },
+  "history": {
+    "title": "السجل",
+    "empty": "لا يوجد سجل بعد",
+    "emptyHint": "ابدأ جلستك الأولى",
+    "sessions": "جلسة",
+    "totalMinutes": "دقيقة",
+    "avgDuration": "متوسط المدة",
+    "thisWeek": "هذا الأسبوع",
+    "total": "الإجمالي"
+  },
+  "settings": {
+    "title": "الإعدادات",
+    "haptics": "الاهتزاز",
+    "hapticsOn": "مفعّل",
+    "hapticsOff": "معطّل",
+    "intensity": "شدة الاهتزاز",
+    "intensityLight": "خفيف",
+    "intensityMedium": "متوسط",
+    "intensityStrong": "قوي",
+    "language": "اللغة",
+    "arabic": "العربية",
+    "english": "English",
+    "theme": "المظهر",
+    "dark": "داكن",
+    "light": "فاتح",
+    "resetHistory": "مسح السجل",
+    "resetConfirm": "هل أنت متأكد؟",
+    "resetMessage": "سيتم حذف جميع الجلسات السابقة.",
+    "resetYes": "مسح",
+    "resetNo": "إلغاء",
+    "version": "الإصدار"
+  },
+  "custom": {
+    "title": "ذكر مخصص",
+    "arabicPlaceholder": "اكتب الذكر بالعربية",
+    "countPlaceholder": "العدد (اتركه فارغًا للعد الحر)",
+    "save": "حفظ",
+    "cancel": "إلغاء"
+  },
+  "days": {
+    "sat": "سبت",
+    "sun": "أحد",
+    "mon": "إثنين",
+    "tue": "ثلاثاء",
+    "wed": "أربعاء",
+    "thu": "خميس",
+    "fri": "جمعة"
+  }
+}

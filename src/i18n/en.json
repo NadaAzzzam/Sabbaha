@@ -1,0 +1,86 @@
+{
+  "home": {
+    "title": "Habbah",
+    "subtitle": "Remember Allah",
+    "addCustom": "Add custom dhikr",
+    "history": "History",
+    "settings": "Settings",
+    "times": "times",
+    "free": "free"
+  },
+  "setup": {
+    "fixedMode": "Fixed Count",
+    "freeMode": "Free Count",
+    "count": "Count",
+    "start": "Start",
+    "back": "Back"
+  },
+  "session": {
+    "pause": "Pause",
+    "resume": "Resume",
+    "finish": "Finish",
+    "exitTitle": "Exit session?",
+    "exitMessage": "Your current session will be saved.",
+    "exitConfirm": "Exit",
+    "exitCancel": "Continue",
+    "free": "free"
+  },
+  "summary": {
+    "blessing": "May Allah bless your time",
+    "count": "tasbeeha",
+    "duration": "Duration",
+    "minutes": "min",
+    "seconds": "sec",
+    "and": "and",
+    "newDhikr": "New Dhikr",
+    "repeat": "Same Dhikr"
+  },
+  "history": {
+    "title": "History",
+    "empty": "No history yet",
+    "emptyHint": "Start your first session",
+    "sessions": "sessions",
+    "totalMinutes": "minutes",
+    "avgDuration": "Avg duration",
+    "thisWeek": "This Week",
+    "total": "Total"
+  },
+  "settings": {
+    "title": "Settings",
+    "haptics": "Haptic Feedback",
+    "hapticsOn": "On",
+    "hapticsOff": "Off",
+    "intensity": "Haptic Intensity",
+    "intensityLight": "Light",
+    "intensityMedium": "Medium",
+    "intensityStrong": "Strong",
+    "language": "Language",
+    "arabic": "Arabic",
+    "english": "English",
+    "theme": "Theme",
+    "dark": "Dark",
+    "light": "Light",
+    "resetHistory": "Clear History",
+    "resetConfirm": "Are you sure?",
+    "resetMessage": "All session history will be deleted.",
+    "resetYes": "Clear",
+    "resetNo": "Cancel",
+    "version": "Version"
+  },
+  "custom": {
+    "title": "Custom Dhikr",
+    "arabicPlaceholder": "Type dhikr in Arabic",
+    "countPlaceholder": "Count (leave empty for free mode)",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "days": {
+    "sat": "Sat",
+    "sun": "Sun",
+    "mon": "Mon",
+    "tue": "Tue",
+    "wed": "Wed",
+    "thu": "Thu",
+    "fri": "Fri"
+  }
+}
