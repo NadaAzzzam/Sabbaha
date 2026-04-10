@@ -3,13 +3,16 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "react-native run-android",
+    "android": "node scripts/run-android.js",
+    "android:reset-build": "node scripts/android-reset-build.js",
+    "gradle:stop": "node scripts/gradle-stop.js",
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",
+    "postinstall": "patch-package",
     "test": "jest",
-    "web": "webpack serve --config webpack.config.js",
-    "build:web": "NODE_ENV=production webpack --config webpack.config.js"
+    "web": "vite",
+    "build:web": "vite build"
   },
   "dependencies": {
     "@react-native/new-app-screen": "0.85.0",
@@ -27,11 +30,13 @@
     "react-native-haptic-feedback": "^3.0.0",
     "react-native-localize": "^3.7.0",
     "react-native-mmkv": "^4.3.1",
+    "react-native-nitro-modules": "^0.35.3",
     "react-native-reanimated": "^4.3.0",
     "react-native-safe-area-context": "^5.5.2",
     "react-native-screens": "^4.24.0",
     "react-native-svg": "^15.15.4",
     "react-native-web": "^0.21.0",
+    "react-native-worklets": "^0.8.1",
     "zustand": "^5.0.12"
   },
   "devDependencies": {
@@ -51,17 +56,20 @@
     "@types/jest": "^29.5.13",
     "@types/react": "^19.2.0",
     "@types/react-test-renderer": "^19.1.0",
-    "babel-loader": "^10.1.1",
+    "@vitejs/plugin-react": "^5.1.2",
+    "babel-loader": "^9.2.1",
     "eslint": "^8.19.0",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.6.6",
     "jest": "^29.6.3",
+    "patch-package": "^8.0.0",
     "prettier": "2.8.8",
     "react-test-renderer": "19.2.3",
     "typescript": "^5.8.3",
     "url-loader": "^4.1.1",
+    "vite": "^7.3.2",
     "webpack": "^5.105.4",
-    "webpack-cli": "^7.0.2",
+    "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.2.3"
   },
   "engines": {

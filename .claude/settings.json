@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//d/Work/**)",
+      "Bash(node -e \"const fs=require\\('fs'\\); console.log\\(fs.existsSync\\('node_modules/vite'\\) ? 'VITE FOUND' : 'MISSING'\\)\")",
+      "Bash(node -e ':*)",
+      "Bash(node \"d:/Work/Nada/Sabbaha/node_modules/vite/bin/vite.js\" --version)",
+      "Bash(node node_modules/vite/bin/vite.js build)",
+      "Bash(rm -rf \"d:/Work/Nada/Sabbaha/node_modules/vite\")",
+      "Read(//d/tmp/**)",
+      "Bash(npm pack:*)",
+      "Bash(rm -rf /tmp/package)",
+      "Bash(tar -xzf /tmp/vite-5.4.19.tgz -C /tmp)",
+      "Bash(cp -r /tmp/package \"d:/Work/Nada/Sabbaha/node_modules/vite\")",
+      "Bash(tar -xzf /tmp/esbuild-0.21.*.tgz -C /tmp)",
+      "Bash(cp -r /tmp/package \"d:/Work/Nada/Sabbaha/node_modules/esbuild\")",
+      "Read(//c/Users/EGDEV07/**)",
+      "Bash(pkill -f \"vite.js\")",
+      "Bash(node -e \"const p=require\\('d:/Work/Nada/Sabbaha/node_modules/react-native-reanimated/package.json'\\); console.log\\(JSON.stringify\\(p.exports?.['.']?.import || p.main, null, 2\\)\\)\")"
+    ]
+  }
+}

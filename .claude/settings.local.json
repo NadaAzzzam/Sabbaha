@@ -4,7 +4,15 @@
       "Bash(npm install:*)",
       "Bash(node -e \"const p = require\\('./package.json'\\); console.log\\(JSON.stringify\\(p.dependencies, null, 2\\)\\)\")",
       "WebFetch(domain:dorar.net)",
-      "Bash(npx webpack:*)"
+      "Bash(npx webpack:*)",
+      "Bash(./node_modules/.bin/webpack --config webpack.config.js)",
+      "Bash(node node_modules/webpack/bin/webpack.js --config webpack.config.js)",
+      "Bash(npm ls:*)",
+      "Bash(npm config:*)",
+      "Bash(node -e \"const fs=require\\('fs'\\); console.log\\(fs.existsSync\\('d:/Work/Nada/Sabbaha/node_modules/@react-native/typescript-config'\\)\\)\")",
+      "Bash(node node_modules/vite/bin/vite.js --port 3000)",
+      "Bash(curl -s http://localhost:3000)",
+      "Bash(pkill -f \"vite\")"
     ]
   }
 }

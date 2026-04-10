@@ -1,4 +1,11 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, {
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo,
+  memo,
+  useState,
+} from 'react';
 import {
   View,
   StyleSheet,
@@ -16,7 +23,6 @@ import Animated, {
   withSequence,
   withTiming,
   withDelay,
-  runOnJS,
 } from 'react-native-reanimated';
 import { ScreenWrapper } from '../components/ui/ScreenWrapper';
 import { AppText } from '../components/ui/AppText';
@@ -24,6 +30,10 @@ import { ProgressRing } from '../components/dhikr/ProgressRing';
 import { useTheme } from '../hooks/useTheme';
 import { useCounter } from '../hooks/useCounter';
 import { useHistoryStore } from '../stores/useHistoryStore';
+import {
+  useSessionStore,
+  getSessionActiveDurationMs,
+} from '../stores/useSessionStore';
 import { useSettingsStore } from '../stores/useSettingsStore';
 import { DEFAULT_DHIKR } from '../constants/defaultDhikr';
 import { useDhikrStore } from '../stores/useDhikrStore';
@@ -32,10 +42,52 @@ import { typography } from '../theme/typography';
 import { formatTimer, formatCount } from '../utils/formatters';
 import type { RootStackParamList } from '../navigation/types';
 
-const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window');
+const { width: SCREEN_W } = Dimensions.get('window');
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 type Route = RouteProp<RootStackParamList, 'Session'>;
+
+/** Owns the 1s tick so the rest of SessionScreen (SVG ring, layout) does not re-render every second. */
+const SessionElapsedTimer = memo(function SessionElapsedTimer({
+  startedAt,
+  isPaused,
+  pauseStartedAt,
+  pausedAccumulatedMs,
+  textColor,
+}: {
+  startedAt: number;
+  isPaused: boolean;
+  pauseStartedAt: number | null;
+  pausedAccumulatedMs: number;
+  textColor: string;
+}) {
+  const [tick, setTick] = useState(0);
+
+  useEffect(() => {
+    if (isPaused) return undefined;
+    const id = setInterval(() => setTick(t => t + 1), 1000);
+    return () => clearInterval(id);
+  }, [isPaused]);
+
+  const elapsedSeconds = useMemo(() => {
+    void tick;
+    const now = Date.now();
+    if (!startedAt) return 0;
+    let pauseMs = pausedAccumulatedMs;
+    if (isPaused && pauseStartedAt != null) {
+      pauseMs += now - pauseStartedAt;
+    }
+    return Math.max(0, Math.floor((now - startedAt - pauseMs) / 1000));
+  }, [tick, startedAt, isPaused, pauseStartedAt, pausedAccumulatedMs]);
+
+  return (
+    <View style={styles.timerRow}>
+      <AppText style={[typography.timer, { color: textColor }]}>
+        {formatTimer(elapsedSeconds)}
+      </AppText>
+    </View>
+  );
+});
 
 export const SessionScreen = () => {
   const colors = useTheme();
@@ -44,55 +96,68 @@ export const SessionScreen = () => {
   const route = useRoute<Route>();
   const { dhikrId, targetCount } = route.params;
 
-  const { customDhikr } = useDhikrStore();
-  const allDhikr = [...DEFAULT_DHIKR, ...customDhikr];
-  const item = allDhikr.find(d => d.id === dhikrId);
+  const customDhikr = useDhikrStore(s => s.customDhikr);
+  const item = useMemo(
+    () => [...DEFAULT_DHIKR, ...customDhikr].find(d => d.id === dhikrId),
+    [customDhikr, dhikrId],
+  );
 
-  const {
-    initSession,
-    currentCount,
-    isPaused,
-    startedAt,
-    pause,
-    resume,
-    reset,
-  } = useSessionStore();
-  const { addSession } = useHistoryStore();
-  const { language } = useSettingsStore();
+  const initSession = useSessionStore(s => s.initSession);
+  const currentCount = useSessionStore(s => s.currentCount);
+  const isPaused = useSessionStore(s => s.isPaused);
+  const startedAt = useSessionStore(s => s.startedAt);
+  const pauseStartedAt = useSessionStore(s => s.pauseStartedAt);
+  const pausedAccumulatedMs = useSessionStore(s => s.pausedAccumulatedMs);
+  const pause = useSessionStore(s => s.pause);
+  const resume = useSessionStore(s => s.resume);
+  const reset = useSessionStore(s => s.reset);
+  const addSession = useHistoryStore(s => s.addSession);
+  const language = useSettingsStore(s => s.language);
 
-  const [elapsedSeconds, setElapsedSeconds] = useState(0);
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const glowOpacity = useSharedValue(0);
   const pulseScale = useSharedValue(1);
 
-  // Init session on mount
+  const [sessionHydrated, setSessionHydrated] = useState(() =>
+    useSessionStore.persist.hasHydrated(),
+  );
+
   useEffect(() => {
-    initSession(dhikrId, item?.arabicText ?? dhikrId, targetCount);
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
+    if (useSessionStore.persist.hasHydrated()) {
+      setSessionHydrated(true);
+    }
+    return useSessionStore.persist.onFinishHydration(() =>
+      setSessionHydrated(true),
+    );
   }, []);
 
-  // Timer
+  // After MMKV rehydrate: resume in-progress session if it matches this screen; else start fresh.
   useEffect(() => {
-    if (isPaused) {
-      if (timerRef.current) clearInterval(timerRef.current);
-    } else {
-      timerRef.current = setInterval(() => {
-        setElapsedSeconds(s => s + 1);
-      }, 1000);
-    }
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, [isPaused]);
+    if (!sessionHydrated) return;
+    const s = useSessionStore.getState();
+    const canResume =
+      s.dhikrId === dhikrId &&
+      s.targetCount === targetCount &&
+      s.startedAt > 0 &&
+      !s.isComplete;
 
-  const startedAtRef = useRef(startedAt);
-  useEffect(() => { startedAtRef.current = startedAt; }, [startedAt]);
+    if (canResume) {
+      if (!s.dhikrText && item?.arabicText) {
+        useSessionStore.setState({ dhikrText: item.arabicText });
+      }
+      return;
+    }
+    initSession(dhikrId, item?.arabicText ?? dhikrId, targetCount);
+  }, [
+    sessionHydrated,
+    dhikrId,
+    targetCount,
+    item?.arabicText,
+    initSession,
+  ]);
 
   const saveAndNavigate = useCallback(
     (count: number) => {
-      const duration = Date.now() - startedAtRef.current;
+      const duration = getSessionActiveDurationMs();
       const id = `session_${Date.now()}`;
       addSession({
         id,
@@ -106,7 +171,7 @@ export const SessionScreen = () => {
       reset();
       navigation.replace('Summary', { sessionId: id });
     },
-    [dhikrId, item, targetCount],
+    [addSession, dhikrId, item, navigation, reset, targetCount],
   );
 
   const triggerCompletionGlow = useCallback(() => {
@@ -123,11 +188,13 @@ export const SessionScreen = () => {
   const currentCountRef = useRef(currentCount);
   useEffect(() => { currentCountRef.current = currentCount; }, [currentCount]);
 
-  const handleComplete = useCallback(() => {
-    triggerCompletionGlow();
-    const finalCount = currentCountRef.current + 1; // +1 because increment fires before complete
-    setTimeout(() => saveAndNavigate(finalCount), 1500);
-  }, [triggerCompletionGlow, saveAndNavigate]);
+  const handleComplete = useCallback(
+    (finalCount: number) => {
+      triggerCompletionGlow();
+      setTimeout(() => saveAndNavigate(finalCount), 1500);
+    },
+    [triggerCompletionGlow, saveAndNavigate],
+  );
 
   const { tap } = useCounter(handleComplete);
 
@@ -222,12 +289,13 @@ export const SessionScreen = () => {
             )}
           </Animated.View>
 
-          {/* Timer */}
-          <View style={styles.timerRow}>
-            <AppText style={[typography.timer, { color: colors.textMuted }]}>
-              {formatTimer(elapsedSeconds)}
-            </AppText>
-          </View>
+          <SessionElapsedTimer
+            startedAt={startedAt}
+            isPaused={isPaused}
+            pauseStartedAt={pauseStartedAt}
+            pausedAccumulatedMs={pausedAccumulatedMs}
+            textColor={colors.textMuted}
+          />
 
           {/* Bottom controls */}
           <View style={styles.bottomRow}>

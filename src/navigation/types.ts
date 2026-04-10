@@ -3,6 +3,7 @@ export type RootStackParamList = {
   SessionSetup: { dhikrId: string };
   Session: { dhikrId: string; targetCount: number };
   Summary: { sessionId: string };
+  Chart: undefined;
 };
 
 export type TabParamList = {

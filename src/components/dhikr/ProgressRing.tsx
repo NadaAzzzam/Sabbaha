@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 import Animated, {
   useAnimatedProps,
-  useDerivedValue,
+  useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
 
@@ -17,7 +17,7 @@ interface Props {
   strokeWidth?: number;
 }
 
-export const ProgressRing = ({
+const ProgressRingInner = ({
   size,
   progress,
   accentColor,
@@ -26,13 +26,14 @@ export const ProgressRing = ({
 }: Props) => {
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
+  const progressSV = useSharedValue(progress);
 
-  const animatedProgress = useDerivedValue(() =>
-    withTiming(progress, { duration: 300 }),
-  );
+  useEffect(() => {
+    progressSV.value = withTiming(progress, { duration: 300 });
+  }, [progress, progressSV]);
 
   const animatedProps = useAnimatedProps(() => ({
-    strokeDashoffset: circumference * (1 - animatedProgress.value),
+    strokeDashoffset: circumference * (1 - progressSV.value),
   }));
 
   return (
@@ -65,3 +66,5 @@ export const ProgressRing = ({
     </View>
   );
 };
+
+export const ProgressRing = React.memo(ProgressRingInner);

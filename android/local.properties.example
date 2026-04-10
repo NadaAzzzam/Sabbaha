@@ -1,0 +1,7 @@
+# Copy to "local.properties" (same folder) and adjust paths.
+# Android Studio: Settings → Languages & Frameworks → Android SDK → location.
+# Or run "npm run android" — scripts/run-android.js merges sdk.dir and node.executable automatically.
+sdk.dir=C:/Users/YOUR_USER/AppData/Local/Android/Sdk
+
+# If Gradle says 'node' is not recognized (codegen tasks), set your real node.exe path:
+# node.executable=C:/Program Files/nodejs/node.exe

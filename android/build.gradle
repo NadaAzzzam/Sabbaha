@@ -1,11 +1,10 @@
 buildscript {
     ext {
-        buildToolsVersion = "36.0.0"
         minSdkVersion = 24
         compileSdkVersion = 36
-        targetSdkVersion = 36
+        targetSdkVersion = 35
         ndkVersion = "27.1.12297006"
-        kotlinVersion = "2.1.20"
+        kotlinVersion = "1.9.24"
     }
     repositories {
         google()
@@ -15,6 +14,64 @@ buildscript {
         classpath("com.android.tools.build:gradle")
         classpath("com.facebook.react:react-native-gradle-plugin")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
+    }
+}
+
+// react-native-gesture-handler reads this from rootProject.ext when unset it shells out to `node`
+// (often missing from Gradle's PATH on Windows).
+def reactNativeNodeModulesDir = new File(rootDir, "../node_modules/react-native").absolutePath
+ext.REACT_NATIVE_NODE_MODULES_DIR = reactNativeNodeModulesDir
+
+// react-native-reanimated reads REACT_NATIVE_NODE_MODULES_DIR from the *app* project's ext only
+// (safeAppExtGet). Registering projectsLoaded in this file can be too late; set :app ext before any
+// library's build.gradle runs (e.g. :react-native-reanimated).
+gradle.beforeProject { proj ->
+    if (proj.path == ':') {
+        return
+    }
+    def app = proj.rootProject.subprojects.find { it.name == 'app' }
+    if (app != null) {
+        def rnPath = new File(proj.rootProject.projectDir, '../node_modules/react-native').absolutePath
+        app.ext.REACT_NATIVE_NODE_MODULES_DIR = rnPath
+    }
+}
+
+// Node for generateCodegenSchemaFromJavaScript etc. Gradle often spawns cmd.exe without Node on PATH.
+def loadReactNativeNodeExecutable() {
+    def fromEnv = System.getenv("NODE_BINARY")
+    if (fromEnv != null && !fromEnv.trim().isEmpty()) {
+        return fromEnv.trim()
+    }
+    def props = new Properties()
+    def lp = rootProject.file("local.properties")
+    if (lp.exists()) {
+        lp.withInputStream { props.load(it) }
+        def configured = props.getProperty("node.executable")
+        if (configured != null && !configured.trim().isEmpty()) {
+            return configured.trim()
+        }
+    }
+    if (System.getProperty("os.name", "").toLowerCase().contains("windows")) {
+        for (def candidate : ["C:/Program Files/nodejs/node.exe", "C:/Program Files (x86)/nodejs/node.exe"]) {
+            if (new File(candidate).exists()) {
+                return candidate
+            }
+        }
+    }
+    return "node"
+}
+ext.reactNativeNodeExecutable = loadReactNativeNodeExecutable()
+
+// Configure codegen/bundling Node path when each library applies the React plugin.
+// Do not use afterEvaluate here — the root React plugin can finish evaluating subprojects first.
+subprojects { sub ->
+    sub.plugins.withId("com.facebook.react") {
+        def n = rootProject.ext.reactNativeNodeExecutable
+        if (n != null && n != "node") {
+            sub.react {
+                nodeExecutableAndArgs = [n]
+            }
+        }
     }
 }
 

@@ -2,22 +2,27 @@ import { useSessionStore } from '../stores/useSessionStore';
 import { useHaptics } from './useHaptics';
 import { MILESTONE_COUNTS } from '../constants/hapticPatterns';
 
-export const useCounter = (onComplete?: () => void) => {
-  const { currentCount, targetCount, increment, complete } = useSessionStore();
+export const useCounter = (onComplete?: (finalCount: number) => void) => {
+  const increment = useSessionStore(s => s.increment);
+  const complete = useSessionStore(s => s.complete);
   const haptics = useHaptics();
 
   const tap = () => {
-    const next = currentCount + 1;
-    increment();
+    const result = increment();
+    if (!result) {
+      return;
+    }
+
+    const { next, targetCount: limit } = result;
 
     // Milestone check (33, 66, 99, 100)
     const isMilestone = MILESTONE_COUNTS.includes(next);
-    const isComplete = targetCount > 0 && next >= targetCount;
+    const isComplete = limit > 0 && next >= limit;
 
     if (isComplete) {
       complete();
       haptics.complete();
-      onComplete?.();
+      onComplete?.(next);
     } else if (isMilestone) {
       haptics.milestone();
     } else {
@@ -25,5 +30,5 @@ export const useCounter = (onComplete?: () => void) => {
     }
   };
 
-  return { tap, currentCount, targetCount };
+  return { tap };
 };

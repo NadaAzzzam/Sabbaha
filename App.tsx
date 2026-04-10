@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -7,6 +7,7 @@ import { initI18n } from './src/i18n';
 import { RootNavigator } from './src/navigation/RootNavigator';
 import { useSettingsStore } from './src/stores/useSettingsStore';
 import { darkColors, lightColors } from './src/theme/colors';
+import { navigationUiFontFamily } from './src/theme/typography';
 
 // Initialize i18n before first render
 const settings = useSettingsStore.getState();
@@ -29,10 +30,10 @@ const ThemedNavContainer = () => {
           notification: colors.accent,
         },
         fonts: {
-          regular: { fontFamily: 'System', fontWeight: '400' },
-          medium: { fontFamily: 'System', fontWeight: '500' },
-          bold: { fontFamily: 'System', fontWeight: '700' },
-          heavy: { fontFamily: 'System', fontWeight: '900' },
+          regular: { fontFamily: navigationUiFontFamily, fontWeight: '400' },
+          medium: { fontFamily: navigationUiFontFamily, fontWeight: '500' },
+          bold: { fontFamily: navigationUiFontFamily, fontWeight: '700' },
+          heavy: { fontFamily: navigationUiFontFamily, fontWeight: '900' },
         },
       }}
     >

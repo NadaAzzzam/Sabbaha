@@ -1,0 +1,8 @@
+{
+  "java.configuration.updateBuildConfiguration": "automatic",
+  "terminal.integrated.env.windows": {
+    "ANDROID_HOME": "${env:LOCALAPPDATA}\\Android\\Sdk",
+    "ANDROID_SDK_ROOT": "${env:LOCALAPPDATA}\\Android\\Sdk",
+    "PATH": "${env:PATH};${env:LOCALAPPDATA}\\Android\\Sdk\\platform-tools;${env:LOCALAPPDATA}\\Android\\Sdk\\emulator;${env:LOCALAPPDATA}\\Android\\Sdk\\cmdline-tools\\latest\\bin"
+  }
+}

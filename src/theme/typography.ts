@@ -1,9 +1,20 @@
 import { Platform } from 'react-native';
 
-// Cairo for Arabic feel; system fallback
+/** UI stack: Cairo on web (loaded in index.html), platform fonts on native */
+const webFontStack =
+  'Cairo, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+
 export const fontFamily = Platform.select({
   ios: 'System',
   android: 'sans-serif',
+  web: webFontStack,
+  default: 'system-ui, sans-serif',
+}) as string;
+
+/** React Navigation header / label fonts */
+export const navigationUiFontFamily = Platform.select({
+  web: webFontStack,
+  default: 'System',
 }) as string;
 
 export const typography = {

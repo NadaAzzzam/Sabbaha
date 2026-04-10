@@ -1,6 +1,7 @@
 import React from 'react';
 import { Text, TextStyle, StyleSheet, I18nManager } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
+import { fontFamily } from '../../theme/typography';
 
 interface Props {
   style?: TextStyle | TextStyle[];
@@ -30,6 +31,7 @@ export const AppText = ({ style, children, arabic, numberOfLines, onPress }: Pro
 
 const styles = StyleSheet.create({
   base: {
+    fontFamily,
     fontSize: 15,
     lineHeight: 22,
   },

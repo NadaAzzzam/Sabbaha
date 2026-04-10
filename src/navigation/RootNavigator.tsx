@@ -4,6 +4,7 @@ import { TabNavigator } from './TabNavigator';
 import { SessionSetupScreen } from '../screens/SessionSetupScreen';
 import { SessionScreen } from '../screens/SessionScreen';
 import { SummaryScreen } from '../screens/SummaryScreen';
+import { ChartScreen } from '../screens/ChartScreen';
 import type { RootStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -18,5 +19,10 @@ export const RootNavigator = () => (
       options={{ gestureEnabled: false }}
     />
     <Stack.Screen name="Summary" component={SummaryScreen} />
+    <Stack.Screen
+      name="Chart"
+      component={ChartScreen}
+      options={{ animation: 'slide_from_bottom' }}
+    />
   </Stack.Navigator>
 );

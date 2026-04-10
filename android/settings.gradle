@@ -1,6 +1,24 @@
 pluginManagement { includeBuild("../node_modules/@react-native/gradle-plugin") }
 plugins { id("com.facebook.react.settings") }
-extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
+
+// Peer of react-native-mmkv — must exist before :react-native-mmkv is configured.
+// Android autolink for this package is disabled in react-native.config.js to avoid duplicate include.
+include ':react-native-nitro-modules'
+project(':react-native-nitro-modules').projectDir = new File(rootDir, '../node_modules/react-native-nitro-modules/android')
+
+// Default is `npx @react-native-community/cli config`, which often fails on Windows from Gradle
+// ("Process 'command 'cmd'' finished with non-zero exit value 1"). Call the CLI with node instead.
+// Set NODE_BINARY to your node.exe path if Gradle still cannot find Node.
+def reactNativeRoot = rootDir.parentFile
+def rnCliJs = new File(reactNativeRoot, "node_modules/@react-native-community/cli/build/bin.js")
+def nodeExecutable = System.getenv("NODE_BINARY") ?: "node"
+
+extensions.configure(com.facebook.react.ReactSettingsExtension) { ex ->
+  ex.autolinkLibrariesFromCommand(
+    [nodeExecutable, rnCliJs.absolutePath, "config"],
+    reactNativeRoot
+  )
+}
 rootProject.name = 'Sabbaha'
 include ':app'
 includeBuild('../node_modules/@react-native/gradle-plugin')
