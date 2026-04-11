@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
-import { mmkvStorage } from '../utils/mmkv';
+import { persist } from 'zustand/middleware';
+import { safeMmkvJSONStorage } from '../utils/zustandPersistStorage';
 
 export interface SessionRecord {
   id: string;
@@ -28,7 +28,7 @@ export const useHistoryStore = create<HistoryState>()(
     }),
     {
       name: 'habbah-history',
-      storage: createJSONStorage(() => mmkvStorage),
+      storage: safeMmkvJSONStorage,
       partialize: (s) => ({ sessions: s.sessions }),
     },
   ),

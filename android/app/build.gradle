@@ -119,3 +119,23 @@ dependencies {
         implementation jscFlavor
     }
 }
+
+// New Architecture: `gradlew clean` cleans autolinked libraries first, which removes their
+// codegen/jni folders. `:app:externalNativeBuildClean*` then re-runs CMake and fails with
+// add_subdirectory "…/codegen/jni" not found. Skip those tasks during clean and drop .cxx.
+gradle.taskGraph.whenReady {
+    def cleaning = gradle.startParameter.taskNames.any { tn ->
+        tn == "clean" || tn.endsWith(":clean")
+    }
+    if (cleaning) {
+        tasks.matching { it.name.startsWith("externalNativeBuildClean") }.configureEach { t ->
+            t.enabled = false
+        }
+    }
+}
+
+tasks.named("clean").configure {
+    doFirst {
+        delete file("${project.projectDir}/.cxx")
+    }
+}

@@ -1,21 +1,6 @@
 import { create } from 'zustand';
-import {
-  persist,
-  createJSONStorage,
-  type StateStorage,
-} from 'zustand/middleware';
-import { mmkvStorage } from '../utils/mmkv';
-
-/** In-memory fallback so persist always gets storage; otherwise Zustand omits `api.persist` entirely. */
-const memoryStateStorage: StateStorage = {
-  getItem: () => null,
-  setItem: () => {},
-  removeItem: () => {},
-};
-
-const sessionPersistStorage =
-  createJSONStorage(() => mmkvStorage) ??
-  createJSONStorage(() => memoryStateStorage);
+import { persist } from 'zustand/middleware';
+import { safeMmkvJSONStorage } from '../utils/zustandPersistStorage';
 
 interface SessionState {
   dhikrId: string;
@@ -107,7 +92,7 @@ export const useSessionStore = create<SessionState>()(
     }),
     {
       name: 'habbah-session',
-      storage: sessionPersistStorage,
+      storage: safeMmkvJSONStorage,
       partialize: s => ({
         dhikrId: s.dhikrId,
         dhikrText: s.dhikrText,

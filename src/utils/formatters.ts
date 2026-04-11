@@ -1,3 +1,5 @@
+import { hijriMonthName, hijriParts } from './hijri';
+
 const EASTERN = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
 
 export const toEasternNumerals = (n: number): string =>
@@ -30,9 +32,7 @@ export const formatCount = (n: number, lang: 'ar' | 'en'): string =>
   lang === 'ar' ? toEasternNumerals(n) : String(n);
 
 const AR_DAYS = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
-const AR_MONTHS = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
 const EN_DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-const EN_MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
 export const formatDayName = (ts: number, lang: 'ar' | 'en'): string => {
   const d = new Date(ts);
@@ -40,12 +40,10 @@ export const formatDayName = (ts: number, lang: 'ar' | 'en'): string => {
 };
 
 export const formatLongDate = (ts: number, lang: 'ar' | 'en'): string => {
-  const d = new Date(ts);
-  const day = d.getDate();
-  const month = d.getMonth();
-  const year = d.getFullYear();
+  const { year, month, day } = hijriParts(ts);
+  const monthName = hijriMonthName(month, lang);
   if (lang === 'ar') {
-    return `${toEasternNumerals(day)} ${AR_MONTHS[month]} ${toEasternNumerals(year)}`;
+    return `${toEasternNumerals(day)} ${monthName} ${toEasternNumerals(year)} هـ`;
   }
-  return `${EN_MONTHS[month]} ${day}, ${year}`;
+  return `${monthName} ${day}, ${year} AH`;
 };

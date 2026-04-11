@@ -18,7 +18,8 @@ import { useSettingsStore } from '../stores/useSettingsStore';
 import { spacing, radius } from '../theme/spacing';
 import { typography } from '../theme/typography';
 import { calcStats, weeklyData } from '../utils/statsCalculator';
-import { formatDuration } from '../utils/formatters';
+import { formatDuration, formatCount } from '../utils/formatters';
+import { hijriParts } from '../utils/hijri';
 import type { RootStackParamList } from '../navigation/types';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
@@ -32,8 +33,6 @@ const CHART_H = 120;
 const CHART_TOP_PAD = 22;   // reserve space for value labels above the tallest bar
 const CHART_BOTTOM_PAD = 6;  // baseline breathing room (day labels now rendered as RN Text)
 const BAR_GAP = 8;
-
-const dayKeys = ['sat', 'sun', 'mon', 'tue', 'wed', 'thu', 'fri'] as const;
 
 export const HistoryScreen = () => {
   const colors = useTheme();
@@ -188,6 +187,10 @@ export const HistoryScreen = () => {
                 <View style={[styles.dayLabelRow, { width: CHART_W }]}>
                   {weekly.map((_, i) => {
                     const isToday = i === 6;
+                    const anchor = new Date();
+                    anchor.setHours(12, 0, 0, 0);
+                    anchor.setDate(anchor.getDate() - (6 - i));
+                    const { day } = hijriParts(anchor.getTime());
                     return (
                       <View
                         key={i}
@@ -210,7 +213,7 @@ export const HistoryScreen = () => {
                             includeFontPadding: false,
                           }}
                         >
-                          {t(`days.${dayKeys[i]}`)}
+                          {formatCount(day, language)}
                         </AppText>
                       </View>
                     );

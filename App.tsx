@@ -1,17 +1,39 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { StyleSheet } from 'react-native';
-import { initI18n } from './src/i18n';
+import { AppState, StyleSheet, type AppStateStatus } from 'react-native';
+import i18n, { initI18n } from './src/i18n';
 import { RootNavigator } from './src/navigation/RootNavigator';
 import { useSettingsStore } from './src/stores/useSettingsStore';
 import { darkColors, lightColors } from './src/theme/colors';
 import { navigationUiFontFamily } from './src/theme/typography';
+import { cancelReminder, scheduleReminder } from './src/utils/notifications';
 
 // Initialize i18n before first render
 const settings = useSettingsStore.getState();
 initI18n(settings.language);
+
+const useReminderScheduler = () => {
+  const reminderInterval = useSettingsStore(s => s.reminderInterval);
+
+  useEffect(() => {
+    const handleChange = (state: AppStateStatus) => {
+      if (state === 'background' || state === 'inactive') {
+        scheduleReminder(
+          reminderInterval,
+          i18n.t('notifications.reminderTitle'),
+          i18n.t('notifications.reminderBody'),
+        );
+      } else if (state === 'active') {
+        cancelReminder();
+      }
+    };
+
+    const sub = AppState.addEventListener('change', handleChange);
+    return () => sub.remove();
+  }, [reminderInterval]);
+};
 
 const ThemedNavContainer = () => {
   const theme = useSettingsStore(s => s.theme);
@@ -42,11 +64,16 @@ const ThemedNavContainer = () => {
   );
 };
 
+const AppInner = () => {
+  useReminderScheduler();
+  return <ThemedNavContainer />;
+};
+
 export default function App() {
   return (
     <GestureHandlerRootView style={styles.flex}>
       <SafeAreaProvider>
-        <ThemedNavContainer />
+        <AppInner />
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );

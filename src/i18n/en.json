@@ -69,6 +69,13 @@
     "soundVolumeLow": "Low",
     "soundVolumeMedium": "Medium",
     "soundVolumeHigh": "High",
+    "reminder": "Reminder",
+    "reminderOff": "Off",
+    "reminder5": "5m",
+    "reminder10": "10m",
+    "reminder15": "15m",
+    "reminderPermTitle": "Notifications disabled",
+    "reminderPermMessage": "Please allow notifications in your system settings to enable reminders.",
     "language": "Language",
     "arabic": "Arabic",
     "english": "English",
@@ -88,6 +95,10 @@
     "countPlaceholder": "Count (leave empty for free mode)",
     "save": "Save",
     "cancel": "Cancel"
+  },
+  "notifications": {
+    "reminderTitle": "Time for dhikr",
+    "reminderBody": "Take a moment to remember Allah"
   },
   "days": {
     "sat": "Sat",

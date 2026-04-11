@@ -1,0 +1,19 @@
+diff --git a/node_modules/@notifee/react-native/android/src/main/java/io/invertase/notifee/NotifeeApiModule.java b/node_modules/@notifee/react-native/android/src/main/java/io/invertase/notifee/NotifeeApiModule.java
+--- a/node_modules/@notifee/react-native/android/src/main/java/io/invertase/notifee/NotifeeApiModule.java
++++ b/node_modules/@notifee/react-native/android/src/main/java/io/invertase/notifee/NotifeeApiModule.java
+@@ -14,13 +14,15 @@ import com.facebook.react.bridge.Promise;
+ import com.facebook.react.bridge.Promise;
+ import com.facebook.react.bridge.ReactApplicationContext;
+ import com.facebook.react.bridge.ReactContextBaseJavaModule;
+ import com.facebook.react.bridge.ReactMethod;
+ import com.facebook.react.bridge.ReadableArray;
+ import com.facebook.react.bridge.ReadableMap;
++import com.facebook.react.module.annotations.ReactModule;
+ import com.facebook.react.modules.core.PermissionAwareActivity;
+ import com.facebook.react.modules.core.PermissionListener;
+ import java.util.ArrayList;
+ import java.util.HashMap;
+ import java.util.Map;
+ 
++@ReactModule(name = "NotifeeApiModule")
+ public class NotifeeApiModule extends ReactContextBaseJavaModule implements PermissionListener {

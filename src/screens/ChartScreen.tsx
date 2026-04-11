@@ -39,6 +39,8 @@ import {
 } from '../utils/statsCalculator';
 import { spacing, radius } from '../theme/spacing';
 import { typography } from '../theme/typography';
+import { hijriMonthName, hijriParts } from '../utils/hijri';
+import { formatLongDate } from '../utils/formatters';
 
 const { width: SCREEN_W } = Dimensions.get('window');
 // Chart card sits inside scroll content (paddingH lg) and has its own padding md.
@@ -85,31 +87,14 @@ const pointValue = (p: DailyPoint, metric: Metric): number => {
 };
 
 const formatAxisDate = (ts: number, granularity: Granularity, lang: 'ar' | 'en'): string => {
-  const d = new Date(ts);
-  const day = d.getDate();
-  const month = d.getMonth() + 1;
-  const year = d.getFullYear();
-
+  const { month, day } = hijriParts(ts);
   if (granularity === 'month') {
-    const MONTHS_AR = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
-    const MONTHS_EN = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    return lang === 'ar' ? MONTHS_AR[d.getMonth()] : MONTHS_EN[d.getMonth()];
+    return hijriMonthName(month, lang);
   }
   if (granularity === 'week') {
     return lang === 'ar' ? `${day}/${month}` : `${month}/${day}`;
   }
   return lang === 'ar' ? `${day}/${month}` : `${month}/${day}`;
-};
-
-const formatFullDate = (ts: number, lang: 'ar' | 'en'): string => {
-  const d = new Date(ts);
-  const day = d.getDate();
-  const month = d.getMonth() + 1;
-  const year = d.getFullYear();
-  const MONTHS_AR = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
-  const MONTHS_EN = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  if (lang === 'ar') return `${day} ${MONTHS_AR[d.getMonth()]} ${year}`;
-  return `${MONTHS_EN[d.getMonth()]} ${day}, ${year}`;
 };
 
 // ─── Component ───────────────────────────────────────────────────────────
@@ -436,7 +421,7 @@ export const ChartScreen = () => {
               {maxPoint && (
                 <SummaryCard
                   label={isAr ? 'أفضل يوم' : 'Best day'}
-                  value={formatFullDate(maxPoint.timestamp, language)}
+                  value={formatLongDate(maxPoint.timestamp, language)}
                   small
                   colors={colors}
                 />
@@ -481,7 +466,7 @@ export const ChartScreen = () => {
             {selectedPoint !== null && (
               <View style={[styles.tooltip, { backgroundColor: colors.surfaceElevated, borderColor: colors.accent }]}>
                 <AppText arabic={isAr} style={[styles.tooltipDate, { color: colors.textSecondary }]}>
-                  {formatFullDate(selectedPoint.timestamp, language)}
+                  {formatLongDate(selectedPoint.timestamp, language)}
                 </AppText>
                 <AppText arabic={isAr} style={[styles.tooltipValue, { color: colors.accent }]}>
                   {pointValue(selectedPoint, metric)} {metricLabel(metric)}
@@ -510,7 +495,7 @@ export const ChartScreen = () => {
               arabic={isAr}
               style={[styles.rangeLabel, { color: colors.textMuted }]}
             >
-              {formatFullDate(fromMs, language)} — {formatFullDate(toMs, language)}
+              {formatLongDate(fromMs, language)} — {formatLongDate(toMs, language)}
             </AppText>
           </>
         )}

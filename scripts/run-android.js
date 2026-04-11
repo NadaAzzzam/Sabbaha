@@ -528,9 +528,14 @@ function ensureAndroidDevice(sdkForDevice) {
     windowsHide: false,
   });
   child.unref();
-  console.log('[android] Waiting for emulator in adb (up to 3 minutes)…');
-  for (let i = 0; i < 60; i++) {
-    sleepSync(3);
+  const emuWaitSec = Math.max(60, parseInt(process.env.ANDROID_EMULATOR_WAIT_SEC || '360', 10) || 360);
+  const emuPollSec = 3;
+  const emuIters = Math.ceil(emuWaitSec / emuPollSec);
+  console.log(
+    `[android] Waiting for emulator in adb (up to ${Math.round(emuWaitSec / 60)} min; set ANDROID_EMULATOR_WAIT_SEC to override)…`,
+  );
+  for (let i = 0; i < emuIters; i++) {
+    sleepSync(emuPollSec);
     if (hasConnectedDevice(sdkForDevice)) {
       console.log('[android] Device connected.\n');
       return;

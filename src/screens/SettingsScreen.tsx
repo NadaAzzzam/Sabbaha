@@ -17,11 +17,13 @@ import {
   type Theme,
   type HapticIntensity,
   type SoundVolume,
+  type ReminderInterval,
 } from '../stores/useSettingsStore';
 import { useHistoryStore } from '../stores/useHistoryStore';
 import { spacing, radius } from '../theme/spacing';
 import { typography } from '../theme/typography';
 import i18n from '../i18n';
+import { requestNotificationPermission } from '../utils/notifications';
 
 const Row = ({
   label,
@@ -84,12 +86,14 @@ export const SettingsScreen = () => {
     hapticIntensity,
     soundEnabled,
     soundVolume,
+    reminderInterval,
     language,
     theme,
     setHapticsEnabled,
     setHapticIntensity,
     setSoundEnabled,
     setSoundVolume,
+    setReminderInterval,
     setLanguage,
     setTheme,
   } = useSettingsStore();
@@ -98,6 +102,21 @@ export const SettingsScreen = () => {
   const handleLanguage = (v: string) => {
     setLanguage(v as Language);
     i18n.changeLanguage(v);
+  };
+
+  const handleReminder = async (v: string) => {
+    const next = v as ReminderInterval;
+    if (next !== 'off') {
+      const granted = await requestNotificationPermission();
+      if (!granted) {
+        Alert.alert(
+          t('settings.reminderPermTitle'),
+          t('settings.reminderPermMessage'),
+        );
+        return;
+      }
+    }
+    setReminderInterval(next);
   };
 
   const handleResetHistory = () => {
@@ -174,6 +193,21 @@ export const SettingsScreen = () => {
             </Row>
           )}
 
+          {/* Reminder */}
+          <Row label={t('settings.reminder')} colors={colors}>
+            <SegmentGroup
+              options={[
+                { label: t('settings.reminderOff'), value: 'off' },
+                { label: t('settings.reminder5'), value: '5min' },
+                { label: t('settings.reminder10'), value: '10min' },
+                { label: t('settings.reminder15'), value: '15min' },
+              ]}
+              selected={reminderInterval}
+              onSelect={handleReminder}
+              colors={colors}
+            />
+          </Row>
+
           {/* Language */}
           <Row label={t('settings.language')} colors={colors}>
             <SegmentGroup
@@ -248,7 +282,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.sm,
     paddingVertical: 4,
     borderRadius: radius.full,
-    minWidth: 52,
+    minWidth: 44,
     alignItems: 'center',
   },
   dangerBtn: {

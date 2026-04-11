@@ -1,4 +1,5 @@
 import type { SessionRecord } from '../stores/useHistoryStore';
+import { hijriDateKey, hijriYearMonthKey } from './hijri';
 
 export interface DhikrStats {
   dhikrId: string;
@@ -11,8 +12,8 @@ export interface DhikrStats {
 }
 
 export interface DailyPoint {
-  date: string;       // 'YYYY-MM-DD'
-  timestamp: number;  // midnight ms of that day
+  date: string;       // Hijri 'YYYY-MM-DD' (Umm al-Qura)
+  timestamp: number;  // midnight ms of that local civil day
   sessions: number;
   totalCount: number;
   totalMs: number;
@@ -59,13 +60,7 @@ export const weeklyData = (sessions: SessionRecord[]): number[] => {
 };
 
 // ─── helpers ────────────────────────────────────────────────────────────────
-const toDateKey = (ts: number): string => {
-  const d = new Date(ts);
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
-};
+const toDateKey = (ts: number): string => hijriDateKey(ts);
 
 const dayMidnight = (ts: number): number => {
   const d = new Date(ts);
@@ -152,16 +147,21 @@ export const toMonthlyBuckets = (
 ): DailyPoint[] => {
   const map = new Map<string, DailyPoint>();
   for (const p of points) {
-    const d = new Date(p.timestamp);
-    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    const key = hijriYearMonthKey(p.timestamp);
     const ex = map.get(key);
     if (ex) {
       ex.sessions += p.sessions;
       ex.totalCount += p.totalCount;
       ex.totalMs += p.totalMs;
+      ex.timestamp = Math.min(ex.timestamp, p.timestamp);
     } else {
-      const first = new Date(d.getFullYear(), d.getMonth(), 1);
-      map.set(key, { date: key, timestamp: first.getTime(), sessions: p.sessions, totalCount: p.totalCount, totalMs: p.totalMs });
+      map.set(key, {
+        date: key,
+        timestamp: p.timestamp,
+        sessions: p.sessions,
+        totalCount: p.totalCount,
+        totalMs: p.totalMs,
+      });
     }
   }
   return Array.from(map.values()).sort((a, b) => a.timestamp - b.timestamp);

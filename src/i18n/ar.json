@@ -69,6 +69,13 @@
     "soundVolumeLow": "منخفض",
     "soundVolumeMedium": "متوسط",
     "soundVolumeHigh": "مرتفع",
+    "reminder": "التذكير",
+    "reminderOff": "إيقاف",
+    "reminder5": "٥ د",
+    "reminder10": "١٠ د",
+    "reminder15": "١٥ د",
+    "reminderPermTitle": "الإشعارات غير مفعّلة",
+    "reminderPermMessage": "يرجى السماح بالإشعارات من إعدادات النظام لتفعيل التذكير.",
     "language": "اللغة",
     "arabic": "العربية",
     "english": "English",
@@ -88,6 +95,10 @@
     "countPlaceholder": "العدد (اتركه فارغًا للعد الحر)",
     "save": "حفظ",
     "cancel": "إلغاء"
+  },
+  "notifications": {
+    "reminderTitle": "وقت الذكر",
+    "reminderBody": "خذ لحظة لذكر الله"
   },
   "days": {
     "sat": "سبت",

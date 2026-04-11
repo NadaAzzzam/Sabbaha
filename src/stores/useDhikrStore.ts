@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
-import { mmkvStorage } from '../utils/mmkv';
+import { persist } from 'zustand/middleware';
+import { safeMmkvJSONStorage } from '../utils/zustandPersistStorage';
 import type { DhikrItem } from '../constants/defaultDhikr';
 
 interface DhikrState {
@@ -22,7 +22,7 @@ export const useDhikrStore = create<DhikrState>()(
     }),
     {
       name: 'habbah-dhikr',
-      storage: createJSONStorage(() => mmkvStorage),
+      storage: safeMmkvJSONStorage,
     },
   ),
 );

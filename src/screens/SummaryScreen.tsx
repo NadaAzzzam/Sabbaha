@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Pressable, Platform, Vibration } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTranslation } from 'react-i18next';
@@ -14,6 +14,8 @@ import { ScreenWrapper } from '../components/ui/ScreenWrapper';
 import { AppText } from '../components/ui/AppText';
 import { AppButton } from '../components/ui/AppButton';
 import { useTheme } from '../hooks/useTheme';
+import { useSound } from '../hooks/useSound';
+import { useHaptics } from '../hooks/useHaptics';
 import { useHistoryStore } from '../stores/useHistoryStore';
 import { useSettingsStore } from '../stores/useSettingsStore';
 import { spacing } from '../theme/spacing';
@@ -30,7 +32,22 @@ export const SummaryScreen = () => {
   const navigation = useNavigation<Nav>();
   const route = useRoute<Route>();
   const { sessions } = useHistoryStore();
-  const { language } = useSettingsStore();
+  const { language, hapticsEnabled, soundEnabled } = useSettingsStore();
+  const { playStop } = useSound();
+  const { tap } = useHaptics();
+
+  const handleStrayTap = () => {
+    if (soundEnabled) {
+      playStop();
+    } else if (hapticsEnabled) {
+      // use the same haptic engine the rest of the app uses — more reliable than Vibration API
+      if (Platform.OS === 'android') {
+        Vibration.vibrate([0, 80, 60, 80]);
+      } else {
+        tap();
+      }
+    }
+  };
 
   const session = sessions.find(s => s.id === route.params.sessionId);
 
@@ -44,7 +61,7 @@ export const SummaryScreen = () => {
     cardScale.value = withDelay(400, withSpring(1, { damping: 14, stiffness: 100 }));
     cardOpacity.value = withDelay(400, withTiming(1, { duration: 500 }));
     glowRadius.value = withDelay(400, withSpring(120));
-  }, []);
+  }, [blessingOpacity, cardScale, cardOpacity, glowRadius]);
 
   const blessingStyle = useAnimatedStyle(() => ({ opacity: blessingOpacity.value }));
   const cardStyle = useAnimatedStyle(() => ({
@@ -71,7 +88,7 @@ export const SummaryScreen = () => {
 
   return (
     <ScreenWrapper>
-      <View style={styles.container}>
+      <Pressable style={styles.container} onPress={handleStrayTap}>
         {/* Glow orb */}
         <Animated.View
           style={[
@@ -107,7 +124,8 @@ export const SummaryScreen = () => {
             arabic
             style={[
               typography.arabicLarge,
-              { color: colors.accent, textAlign: 'center', marginBottom: spacing.lg },
+              styles.dhikrTitle,
+              { color: colors.accent },
             ]}
           >
             {session.dhikrText}
@@ -157,7 +175,7 @@ export const SummaryScreen = () => {
             style={{ flex: 1 }}
           />
         </Animated.View>
-      </View>
+      </Pressable>
     </ScreenWrapper>
   );
 };
@@ -180,6 +198,10 @@ const styles = StyleSheet.create({
     padding: spacing.xl,
     marginTop: spacing.xl,
     alignItems: 'center',
+  },
+  dhikrTitle: {
+    textAlign: 'center',
+    marginBottom: spacing.lg,
   },
   statRow: {
     flexDirection: 'row',
