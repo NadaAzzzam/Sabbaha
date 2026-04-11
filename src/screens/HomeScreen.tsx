@@ -1,15 +1,24 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   View,
   FlatList,
-  TouchableOpacity,
+  Pressable,
   StyleSheet,
   Modal,
   TextInput,
   KeyboardAvoidingView,
   Platform,
   Alert,
+  useWindowDimensions,
 } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withRepeat,
+  withTiming,
+  withSequence,
+  Easing,
+} from 'react-native-reanimated';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTranslation } from 'react-i18next';
@@ -22,20 +31,62 @@ import { spacing, radius } from '../theme/spacing';
 import { typography } from '../theme/typography';
 import { DEFAULT_DHIKR, type DhikrItem } from '../constants/defaultDhikr';
 import { useDhikrStore } from '../stores/useDhikrStore';
+import { useHistoryStore } from '../stores/useHistoryStore';
+import { useSettingsStore } from '../stores/useSettingsStore';
+import { calcStreak, todayTotals } from '../utils/statsCalculator';
+import { formatCount, formatDayName, formatLongDate } from '../utils/formatters';
 import type { RootStackParamList } from '../navigation/types';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
+
+const getGreetingKey = (): 'greetingMorning' | 'greetingAfternoon' | 'greetingEvening' => {
+  const h = new Date().getHours();
+  if (h < 12) return 'greetingMorning';
+  if (h < 18) return 'greetingAfternoon';
+  return 'greetingEvening';
+};
 
 export const HomeScreen = () => {
   const colors = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation<Nav>();
+  const { width } = useWindowDimensions();
   const { customDhikr, addCustomDhikr, removeDhikr } = useDhikrStore();
+  const { sessions } = useHistoryStore();
+  const { language } = useSettingsStore();
+  const isAr = language === 'ar';
+
   const [modalVisible, setModalVisible] = useState(false);
   const [arabicText, setArabicText] = useState('');
   const [countText, setCountText] = useState('');
 
   const allDhikr = [...DEFAULT_DHIKR, ...customDhikr];
+
+  const streak = useMemo(() => calcStreak(sessions), [sessions]);
+  const today = useMemo(() => todayTotals(sessions), [sessions]);
+  const greetingKey = useMemo(() => getGreetingKey(), []);
+  const now = Date.now();
+
+  // Gentle breathing pulse on the streak flame when active
+  const pulse = useSharedValue(1);
+  React.useEffect(() => {
+    if (streak > 0) {
+      pulse.value = withRepeat(
+        withSequence(
+          withTiming(1.12, { duration: 900, easing: Easing.inOut(Easing.quad) }),
+          withTiming(1, { duration: 900, easing: Easing.inOut(Easing.quad) }),
+        ),
+        -1,
+        false,
+      );
+    } else {
+      pulse.value = withTiming(1);
+    }
+  }, [streak, pulse]);
+
+  const flameStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: pulse.value }],
+  }));
 
   const handleSelectDhikr = (item: DhikrItem) => {
     navigation.navigate('SessionSetup', { dhikrId: item.id });
@@ -66,7 +117,7 @@ export const HomeScreen = () => {
       [
         { text: t('settings.resetNo'), style: 'cancel' },
         {
-          text: 'حذف',
+          text: isAr ? 'حذف' : 'Delete',
           style: 'destructive',
           onPress: () => removeDhikr(item.id),
         },
@@ -74,27 +125,94 @@ export const HomeScreen = () => {
     );
   };
 
+  const streakLabel = streak === 1 ? t('home.streakLabelOne') : t('home.streakLabel');
+  const flame = streak > 0 ? '🔥' : '✨';
+
+  // Responsive horizontal padding — scales slightly with width
+  const hPad = width < 360 ? spacing.md : spacing.lg;
+
   return (
     <ScreenWrapper edges={['top', 'left', 'right']}>
-      {/* Header */}
-      <View style={styles.header}>
-        <View>
-          <AppText arabic style={[typography.arabicHero, { color: colors.accent }]}>
-            {t('home.title')}
-          </AppText>
-          <AppText style={[typography.body, { color: colors.textSecondary }]}>
-            {t('home.subtitle')}
-          </AppText>
-        </View>
-      </View>
-
-      {/* Divider */}
-      <View style={[styles.divider, { backgroundColor: colors.border }]} />
-
-      {/* Dhikr List */}
       <FlatList
         data={allDhikr}
         keyExtractor={item => item.id}
+        showsVerticalScrollIndicator={false}
+        ListHeaderComponent={
+          <View>
+            {/* ── Greeting + Date ── */}
+            <View style={[styles.headerBlock, { paddingHorizontal: hPad }]}>
+              <View style={styles.headerRow}>
+                <View style={{ flex: 1 }}>
+                  <AppText arabic={isAr} style={[styles.greetingText, { color: colors.textSecondary }]}>
+                    {t(`home.${greetingKey}`)}
+                  </AppText>
+                  <AppText arabic style={[styles.brandText, { color: colors.accent }]}>
+                    {t('home.title')}
+                  </AppText>
+                </View>
+                <View style={[styles.datePill, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+                  <AppText arabic={isAr} style={[styles.dayText, { color: colors.accent }]}>
+                    {formatDayName(now, language)}
+                  </AppText>
+                  <AppText arabic={isAr} style={[styles.dateText, { color: colors.textSecondary }]}>
+                    {formatLongDate(now, language)}
+                  </AppText>
+                </View>
+              </View>
+            </View>
+
+            {/* ── Streak + Today card (gamification) ── */}
+            <View
+              style={[
+                styles.gameCard,
+                {
+                  marginHorizontal: hPad,
+                  backgroundColor: colors.surface,
+                  borderColor: streak > 0 ? colors.accent : colors.border,
+                },
+              ]}
+            >
+              {/* Streak flame */}
+              <View style={styles.gameLeft}>
+                <Animated.Text style={[styles.flameEmoji, flameStyle]}>{flame}</Animated.Text>
+                <View style={styles.streakTextBlock}>
+                  <AppText style={[styles.streakNumber, { color: colors.accent }]}>
+                    {formatCount(streak, language)}
+                  </AppText>
+                  <AppText arabic={isAr} style={[styles.streakLabel, { color: colors.textMuted }]}>
+                    {streakLabel}
+                  </AppText>
+                </View>
+              </View>
+
+              {/* Vertical divider */}
+              <View style={[styles.gameDivider, { backgroundColor: colors.border }]} />
+
+              {/* Today count */}
+              <View style={styles.gameRight}>
+                <AppText style={[styles.todayNumber, { color: colors.text }]}>
+                  {formatCount(today.count, language)}
+                </AppText>
+                <AppText arabic={isAr} style={[styles.todayLabel, { color: colors.textMuted }]}>
+                  {t('home.todayCount')}
+                </AppText>
+                {today.minutes > 0 && (
+                  <AppText arabic={isAr} style={[styles.todayMinutes, { color: colors.accent }]}>
+                    {formatCount(today.minutes, language)} {t('home.todayMinutes')}
+                  </AppText>
+                )}
+              </View>
+            </View>
+
+            {/* Section title */}
+            <View style={[styles.sectionHeader, { paddingHorizontal: hPad }]}>
+              <View style={[styles.sectionDot, { backgroundColor: colors.accent }]} />
+              <AppText arabic style={[styles.sectionTitle, { color: colors.textSecondary }]}>
+                {t('home.subtitle')}
+              </AppText>
+            </View>
+          </View>
+        }
         renderItem={({ item }) => (
           <DhikrCard
             item={item}
@@ -103,17 +221,23 @@ export const HomeScreen = () => {
           />
         )}
         contentContainerStyle={styles.list}
-        showsVerticalScrollIndicator={false}
         ListFooterComponent={
-          <TouchableOpacity
+          <Pressable
             onPress={() => setModalVisible(true)}
-            style={[styles.addBtn, { borderColor: colors.border }]}
-            activeOpacity={0.7}
+            style={({ pressed }) => [
+              styles.addBtn,
+              {
+                marginHorizontal: hPad,
+                borderColor: colors.accent,
+                backgroundColor: pressed ? colors.accentGlow : 'transparent',
+                opacity: pressed ? 0.9 : 1,
+              },
+            ]}
           >
-            <AppText style={[typography.body, { color: colors.textMuted }]}>
+            <AppText style={[styles.addBtnText, { color: colors.accent }]}>
               + {t('home.addCustom')}
             </AppText>
-          </TouchableOpacity>
+          </Pressable>
         }
       />
 
@@ -129,7 +253,8 @@ export const HomeScreen = () => {
           style={styles.modalOverlay}
         >
           <View style={[styles.modalSheet, { backgroundColor: colors.surface }]}>
-            <AppText arabic style={[typography.arabicMedium, { color: colors.text, marginBottom: spacing.lg }]}>
+            <View style={[styles.sheetHandle, { backgroundColor: colors.border }]} />
+            <AppText arabic style={[typography.arabicMedium, { color: colors.text, marginBottom: spacing.lg, textAlign: 'center' }]}>
               {t('custom.title')}
             </AppText>
 
@@ -191,30 +316,152 @@ export const HomeScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  header: {
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.lg,
+  /* Header */
+  headerBlock: {
+    paddingTop: spacing.md,
     paddingBottom: spacing.md,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: spacing.md,
+  },
+  greetingText: {
+    fontSize: 14,
+    lineHeight: 22,
+    fontWeight: '500',
+    marginBottom: 2,
+  },
+  brandText: {
+    fontSize: 34,
+    lineHeight: 48,
+    fontWeight: '700',
+    letterSpacing: 0.5,
+  },
+  datePill: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    alignItems: 'center',
+    minWidth: 110,
+  },
+  dayText: {
+    fontSize: 14,
+    lineHeight: 22,
+    fontWeight: '700',
+    textAlign: 'center',
+  },
+  dateText: {
+    fontSize: 11,
+    lineHeight: 16,
+    marginTop: 2,
+    textAlign: 'center',
+  },
+
+  /* Gamification card */
+  gameCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: radius.xl,
+    borderWidth: 1.5,
+    padding: spacing.md,
+    marginBottom: spacing.md,
+    minHeight: 96,
+  },
+  gameLeft: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  flameEmoji: {
+    fontSize: 40,
+    lineHeight: 48,
+    includeFontPadding: false,
+  },
+  streakTextBlock: {
+    flex: 1,
+  },
+  streakNumber: {
+    fontSize: 28,
+    lineHeight: 36,
+    fontWeight: '800',
+    includeFontPadding: false,
+  },
+  streakLabel: {
+    fontSize: 12,
+    lineHeight: 18,
+    marginTop: 2,
+  },
+  gameDivider: {
+    width: 1,
+    height: 56,
+    marginHorizontal: spacing.md,
+  },
+  gameRight: {
+    flex: 1,
     alignItems: 'flex-end',
   },
-  divider: {
-    height: 1,
-    marginHorizontal: spacing.md,
-    marginBottom: spacing.xs,
+  todayNumber: {
+    fontSize: 24,
+    lineHeight: 32,
+    fontWeight: '700',
+    includeFontPadding: false,
   },
+  todayLabel: {
+    fontSize: 11,
+    lineHeight: 16,
+    marginTop: 2,
+    textAlign: 'right',
+  },
+  todayMinutes: {
+    fontSize: 11,
+    lineHeight: 16,
+    marginTop: 4,
+    fontWeight: '600',
+  },
+
+  /* Section header */
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    marginTop: spacing.xs,
+    marginBottom: spacing.sm,
+  },
+  sectionDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
+  sectionTitle: {
+    fontSize: 13,
+    lineHeight: 20,
+    fontWeight: '600',
+    letterSpacing: 0.5,
+  },
+
+  /* List */
   list: {
-    paddingTop: spacing.xs,
     paddingBottom: spacing.xxxl,
   },
   addBtn: {
-    marginHorizontal: spacing.md,
     marginTop: spacing.md,
     paddingVertical: spacing.md,
     borderRadius: radius.lg,
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderStyle: 'dashed',
     alignItems: 'center',
   },
+  addBtnText: {
+    fontSize: 14,
+    lineHeight: 22,
+    fontWeight: '600',
+  },
+
+  /* Modal */
   modalOverlay: {
     flex: 1,
     justifyContent: 'flex-end',
@@ -225,6 +472,13 @@ const styles = StyleSheet.create({
     borderTopRightRadius: radius.xl,
     padding: spacing.lg,
     paddingBottom: spacing.xl,
+  },
+  sheetHandle: {
+    width: 44,
+    height: 4,
+    borderRadius: 2,
+    alignSelf: 'center',
+    marginBottom: spacing.md,
   },
   input: {
     height: 52,

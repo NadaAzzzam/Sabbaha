@@ -1,11 +1,17 @@
 import React from 'react';
 import {
-  TouchableOpacity,
+  Pressable,
   StyleSheet,
   ViewStyle,
   TextStyle,
   ActivityIndicator,
 } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withTiming,
+} from 'react-native-reanimated';
 import { AppText } from './AppText';
 import { useTheme } from '../../hooks/useTheme';
 import { spacing, radius } from '../../theme/spacing';
@@ -22,6 +28,8 @@ interface Props {
   arabic?: boolean;
 }
 
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
 export const AppButton = ({
   label,
   onPress,
@@ -33,6 +41,8 @@ export const AppButton = ({
   arabic,
 }: Props) => {
   const colors = useTheme();
+  const scale = useSharedValue(1);
+  const glow = useSharedValue(0);
 
   const bgColor =
     variant === 'primary'
@@ -50,11 +60,23 @@ export const AppButton = ({
 
   const borderColor = variant === 'ghost' ? colors.accent : 'transparent';
 
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+    shadowOpacity: glow.value * 0.35,
+  }));
+
   return (
-    <TouchableOpacity
+    <AnimatedPressable
       onPress={onPress}
+      onPressIn={() => {
+        scale.value = withSpring(0.96, { damping: 18, stiffness: 320 });
+        glow.value = withTiming(1, { duration: 120 });
+      }}
+      onPressOut={() => {
+        scale.value = withSpring(1, { damping: 14, stiffness: 220 });
+        glow.value = withTiming(0, { duration: 200 });
+      }}
       disabled={disabled || loading}
-      activeOpacity={0.75}
       style={[
         styles.btn,
         {
@@ -62,7 +84,12 @@ export const AppButton = ({
           borderColor,
           borderWidth: variant === 'ghost' ? 1.5 : 0,
           opacity: disabled ? 0.5 : 1,
+          shadowColor: variant === 'primary' ? colors.accent : 'transparent',
+          shadowRadius: 14,
+          shadowOffset: { width: 0, height: 4 },
+          elevation: variant === 'primary' && !disabled ? 4 : 0,
         },
+        animatedStyle,
         style,
       ]}
     >
@@ -76,13 +103,13 @@ export const AppButton = ({
           {label}
         </AppText>
       )}
-    </TouchableOpacity>
+    </AnimatedPressable>
   );
 };
 
 const styles = StyleSheet.create({
   btn: {
-    height: 52,
+    height: 54,
     borderRadius: radius.full,
     paddingHorizontal: spacing.xl,
     alignItems: 'center',

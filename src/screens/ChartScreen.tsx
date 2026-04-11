@@ -41,10 +41,14 @@ import { spacing, radius } from '../theme/spacing';
 import { typography } from '../theme/typography';
 
 const { width: SCREEN_W } = Dimensions.get('window');
-const CHART_SIDE_PAD = spacing.lg;
-const CHART_W = SCREEN_W - CHART_SIDE_PAD * 2;
+// Chart card sits inside scroll content (paddingH lg) and has its own padding md.
+const SCROLL_H_PAD = spacing.lg;
+const CARD_H_PAD = spacing.md;
+const CHART_W = SCREEN_W - (SCROLL_H_PAD + CARD_H_PAD) * 2;
 const CHART_H = 200;
-const Y_AXIS_W = 36;
+const CHART_TOP_PAD = 8;
+const CHART_BOTTOM_PAD = 28;
+const Y_AXIS_W = 32;
 const PLOT_W = CHART_W - Y_AXIS_W;
 
 // ─── Types ────────────────────────────────────────────────────────────────
@@ -206,7 +210,10 @@ export const ChartScreen = () => {
 
   const selectedPoint = selectedIdx !== null ? points[selectedIdx] : null;
 
-  // Build SVG bar path — animated height
+  // Plot area spans [CHART_TOP_PAD, CHART_TOP_PAD + CHART_H]
+  const plotBottom = CHART_TOP_PAD + CHART_H;
+
+  // Build SVG bar path
   const renderBars = () =>
     points.map((p, i) => {
       const val = pointValue(p, metric);
@@ -214,13 +221,14 @@ export const ChartScreen = () => {
       const x = Y_AXIS_W + i * (barW + BAR_GAP);
       const fullH = Math.max((val / maxVal) * CHART_H, val > 0 ? 4 : 1);
       const rx = Math.min(barW / 2, 5);
+      const barY = plotBottom - fullH;
 
       return (
         <React.Fragment key={p.date}>
           {/* Tap target */}
           <Rect
             x={x}
-            y={0}
+            y={CHART_TOP_PAD}
             width={barW}
             height={CHART_H}
             fill="transparent"
@@ -229,7 +237,7 @@ export const ChartScreen = () => {
           {/* Bar */}
           <Rect
             x={x}
-            y={CHART_H - fullH}
+            y={barY}
             width={barW}
             height={fullH}
             rx={rx}
@@ -247,7 +255,7 @@ export const ChartScreen = () => {
           {isSelected && (
             <Rect
               x={x + barW / 2 - 3}
-              y={CHART_H - fullH - 9}
+              y={Math.max(barY - 9, CHART_TOP_PAD)}
               width={6}
               height={6}
               rx={3}
@@ -259,7 +267,7 @@ export const ChartScreen = () => {
       );
     });
 
-  // X-axis labels (show subset to avoid crowding)
+  // X-axis labels
   const xLabelStep = Math.max(1, Math.ceil(points.length / 8));
   const renderXLabels = () =>
     points.map((p, i) => {
@@ -270,7 +278,7 @@ export const ChartScreen = () => {
         <SvgText
           key={p.date}
           x={x}
-          y={CHART_H + 20}
+          y={plotBottom + 18}
           fontSize={isSelected ? 11 : 10}
           fontWeight={isSelected ? '700' : '400'}
           fill={isSelected ? colors.accent : colors.textMuted}
@@ -283,7 +291,7 @@ export const ChartScreen = () => {
 
   const renderYAxis = () =>
     yGridValues.map((v, i) => {
-      const y = CHART_H - (v / maxVal) * CHART_H;
+      const y = plotBottom - (v / maxVal) * CHART_H;
       return (
         <React.Fragment key={i}>
           <Line
@@ -297,7 +305,7 @@ export const ChartScreen = () => {
           />
           <SvgText
             x={Y_AXIS_W - 4}
-            y={y + 4}
+            y={y + 3}
             fontSize={9}
             fill={colors.textMuted}
             textAnchor="end"
@@ -483,7 +491,7 @@ export const ChartScreen = () => {
 
             {/* ── Chart ── */}
             <View style={[styles.chartCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-              <Svg width={CHART_W} height={CHART_H + 32} style={{ overflow: 'visible' }}>
+              <Svg width={CHART_W} height={CHART_TOP_PAD + CHART_H + CHART_BOTTOM_PAD}>
                 <Defs>
                   <LinearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
                     <Stop offset="0" stopColor={colors.accent} stopOpacity="0.85" />
@@ -688,7 +696,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: spacing.md,
     marginBottom: spacing.sm,
-    overflow: 'visible',
+    overflow: 'hidden',
+    alignItems: 'center',
   },
 
   /* Range label */

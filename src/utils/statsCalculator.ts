@@ -172,3 +172,38 @@ export const earliestSessionDate = (sessions: SessionRecord[]): number | null =>
   if (sessions.length === 0) return null;
   return Math.min(...sessions.map(s => s.completedAt));
 };
+
+// ─── streak: consecutive days ending today with at least one session ───────
+export const calcStreak = (sessions: SessionRecord[]): number => {
+  if (sessions.length === 0) return 0;
+  const daySet = new Set(sessions.map(s => toDateKey(s.completedAt)));
+  let streak = 0;
+  let cursor = new Date();
+  cursor.setHours(0, 0, 0, 0);
+  // If no session today, start counting from yesterday (still a valid streak)
+  if (!daySet.has(toDateKey(cursor.getTime()))) {
+    cursor = new Date(cursor.getTime() - 86400000);
+    if (!daySet.has(toDateKey(cursor.getTime()))) return 0;
+  }
+  while (daySet.has(toDateKey(cursor.getTime()))) {
+    streak += 1;
+    cursor = new Date(cursor.getTime() - 86400000);
+  }
+  return streak;
+};
+
+// ─── today-only totals ─────────────────────────────────────────────────────
+export const todayTotals = (sessions: SessionRecord[]): { count: number; sessions: number; minutes: number } => {
+  const todayKey = toDateKey(Date.now());
+  let count = 0;
+  let sess = 0;
+  let ms = 0;
+  for (const s of sessions) {
+    if (toDateKey(s.completedAt) === todayKey) {
+      count += s.totalCount;
+      sess += 1;
+      ms += s.durationMs;
+    }
+  }
+  return { count, sessions: sess, minutes: Math.round(ms / 60000) };
+};

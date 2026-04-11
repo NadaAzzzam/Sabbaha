@@ -12,7 +12,7 @@ import type { TabParamList } from './types';
 
 const Tab = createBottomTabNavigator<TabParamList>();
 
-const TAB_ICON_AREA = 44; // fixed height for icon + label content
+const TAB_CONTENT_HEIGHT = 60;
 
 const TabIcon = ({
   emoji,
@@ -26,11 +26,12 @@ const TabIcon = ({
   colors: ReturnType<typeof useTheme>;
 }) => (
   <View style={styles.tabItem}>
-    {/* Active indicator pill */}
-    {focused && (
-      <View style={[styles.activePill, { backgroundColor: colors.accentGlow }]} />
-    )}
-    <AppText style={[styles.tabEmoji, { opacity: focused ? 1 : 0.45 }]}>
+    <AppText
+      style={[
+        styles.tabEmoji,
+        { opacity: focused ? 1 : 0.5 },
+      ]}
+    >
       {emoji}
     </AppText>
     <AppText
@@ -42,6 +43,7 @@ const TabIcon = ({
     >
       {label}
     </AppText>
+    {focused && <View style={[styles.activeDot, { backgroundColor: colors.accent }]} />}
   </View>
 );
 
@@ -50,8 +52,8 @@ export const TabNavigator = () => {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
 
-  // Full tab bar height = icon area + bottom safe area (home indicator on iOS, nav bar on Android)
-  const tabBarHeight = TAB_ICON_AREA + Math.max(insets.bottom, Platform.OS === 'android' ? 8 : 0);
+  const bottomInset = insets.bottom > 0 ? insets.bottom : Platform.OS === 'android' ? 8 : 0;
+  const tabBarHeight = TAB_CONTENT_HEIGHT + bottomInset;
 
   return (
     <Tab.Navigator
@@ -62,21 +64,24 @@ export const TabNavigator = () => {
           borderTopColor: colors.border,
           borderTopWidth: StyleSheet.hairlineWidth,
           height: tabBarHeight,
-          // Eliminate React Navigation's own paddingBottom so we control layout fully
-          paddingBottom: 0,
           paddingTop: 0,
-          elevation: 8,
+          paddingBottom: bottomInset,
+          elevation: 10,
           shadowColor: '#000',
           shadowOpacity: 0.12,
-          shadowRadius: 8,
-          shadowOffset: { width: 0, height: -2 },
+          shadowRadius: 10,
+          shadowOffset: { width: 0, height: -3 },
         },
         tabBarShowLabel: false,
-        // Keep the icon filling the whole tab bar cell
         tabBarItemStyle: {
-          height: tabBarHeight,
-          paddingTop: 0,
-          paddingBottom: insets.bottom,
+          height: TAB_CONTENT_HEIGHT,
+          paddingVertical: 0,
+        },
+        tabBarIconStyle: {
+          // Let the icon component size itself — no forced margins
+          width: '100%',
+          height: TAB_CONTENT_HEIGHT,
+          marginTop: 0,
         },
       }}
     >
@@ -128,30 +133,28 @@ export const TabNavigator = () => {
 
 const styles = StyleSheet.create({
   tabItem: {
+    flex: 1,
+    alignSelf: 'stretch',
     alignItems: 'center',
     justifyContent: 'center',
-    // Ensure the item never clips its children
-    overflow: 'visible',
-    width: '100%',
-    paddingTop: 6,
-  },
-  activePill: {
-    position: 'absolute',
-    top: -4,
-    width: 36,
-    height: 3,
-    borderRadius: 2,
   },
   tabEmoji: {
     fontSize: 22,
-    lineHeight: 28,
+    lineHeight: 26,
+    textAlign: 'center',
     includeFontPadding: false,
   },
   tabLabel: {
-    fontSize: 11,
-    lineHeight: 16,
-    marginTop: 2,
-    includeFontPadding: false,
+    fontSize: 10,
+    lineHeight: 14,
+    marginTop: 3,
     textAlign: 'center',
+    includeFontPadding: false,
+  },
+  activeDot: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    marginTop: 4,
   },
 });

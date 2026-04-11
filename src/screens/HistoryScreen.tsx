@@ -24,9 +24,13 @@ import type { RootStackParamList } from '../navigation/types';
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
 const { width: SCREEN_W } = Dimensions.get('window');
-const CHART_PADDING_H = spacing.lg + spacing.md;
-const CHART_W = SCREEN_W - CHART_PADDING_H * 2;
+// Chart card: marginH lg (24) + padding md (16) on each side  →  inner width
+const CHART_CARD_MARGIN = spacing.lg;
+const CHART_CARD_PADDING = spacing.md;
+const CHART_W = SCREEN_W - (CHART_CARD_MARGIN + CHART_CARD_PADDING) * 2;
 const CHART_H = 120;
+const CHART_TOP_PAD = 22;   // reserve space for value labels above the tallest bar
+const CHART_BOTTOM_PAD = 6;  // baseline breathing room (day labels now rendered as RN Text)
 const BAR_GAP = 8;
 
 const dayKeys = ['sat', 'sun', 'mon', 'tue', 'wed', 'thu', 'fri'] as const;
@@ -108,8 +112,7 @@ export const HistoryScreen = () => {
 
                 <Svg
                   width={CHART_W}
-                  height={CHART_H + 32}
-                  style={{ overflow: 'visible' }}
+                  height={CHART_TOP_PAD + CHART_H + CHART_BOTTOM_PAD}
                 >
                   <Defs>
                     <LinearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
@@ -125,9 +128,9 @@ export const HistoryScreen = () => {
                   {/* Baseline */}
                   <Line
                     x1={0}
-                    y1={CHART_H}
+                    y1={CHART_TOP_PAD + CHART_H}
                     x2={CHART_W}
-                    y2={CHART_H}
+                    y2={CHART_TOP_PAD + CHART_H}
                     stroke={colors.border}
                     strokeWidth={1}
                   />
@@ -137,7 +140,7 @@ export const HistoryScreen = () => {
                     const minH = 6;
                     const barH = val > 0 ? Math.max((val / maxVal) * CHART_H, minH) : minH;
                     const x = i * (barW + BAR_GAP);
-                    const y = CHART_H - barH;
+                    const y = CHART_TOP_PAD + CHART_H - barH;
                     const rx = Math.min(barW / 2, 6);
 
                     return (
@@ -155,7 +158,7 @@ export const HistoryScreen = () => {
                         {isToday && val > 0 && (
                           <Rect
                             x={x + barW / 2 - 3}
-                            y={y - 7}
+                            y={Math.max(y - 7, 4)}
                             width={6}
                             height={6}
                             rx={3}
@@ -163,22 +166,13 @@ export const HistoryScreen = () => {
                             fill={colors.accent}
                           />
                         )}
-                        <SvgText
-                          x={x + barW / 2}
-                          y={CHART_H + 22}
-                          fontSize={isToday ? 12 : 11}
-                          fontWeight={isToday ? '700' : '400'}
-                          fill={isToday ? colors.accent : colors.textMuted}
-                          textAnchor="middle"
-                        >
-                          {t(`days.${dayKeys[i]}`)}
-                        </SvgText>
-                        {/* Value label above bar for non-zero */}
+                        {/* Value label above bar — clamped to top pad */}
                         {val > 0 && (
                           <SvgText
                             x={x + barW / 2}
-                            y={y - (isToday ? 14 : 5)}
+                            y={Math.max(y - (isToday ? 12 : 4), 11)}
                             fontSize={9}
+                            fontWeight={isToday ? '700' : '400'}
                             fill={isToday ? colors.accent : colors.textMuted}
                             textAnchor="middle"
                           >
@@ -189,6 +183,39 @@ export const HistoryScreen = () => {
                     );
                   })}
                 </Svg>
+
+                {/* Day labels (RN Text — renders Arabic with proper shaping) */}
+                <View style={[styles.dayLabelRow, { width: CHART_W }]}>
+                  {weekly.map((_, i) => {
+                    const isToday = i === 6;
+                    return (
+                      <View
+                        key={i}
+                        style={[
+                          styles.dayLabelCell,
+                          {
+                            width: barW,
+                            marginRight: i < 6 ? BAR_GAP : 0,
+                          },
+                        ]}
+                      >
+                        <AppText
+                          arabic={isAr}
+                          style={{
+                            fontSize: isToday ? 12 : 11,
+                            lineHeight: 18,
+                            fontWeight: isToday ? '700' : '500',
+                            color: isToday ? colors.accent : colors.textMuted,
+                            textAlign: 'center',
+                            includeFontPadding: false,
+                          }}
+                        >
+                          {t(`days.${dayKeys[i]}`)}
+                        </AppText>
+                      </View>
+                    );
+                  })}
+                </View>
               </View>
             )}
 
@@ -362,6 +389,16 @@ const styles = StyleSheet.create({
   chartHeader: {
     alignItems: 'flex-end',
     marginBottom: spacing.sm,
+  },
+  dayLabelRow: {
+    flexDirection: 'row',
+    marginTop: spacing.sm,
+    // Force LTR regardless of app RTL — bar index 0 always leftmost
+    direction: 'ltr',
+  },
+  dayLabelCell: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
   /* Section header */

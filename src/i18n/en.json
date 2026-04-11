@@ -6,7 +6,17 @@
     "history": "History",
     "settings": "Settings",
     "times": "times",
-    "free": "free"
+    "free": "free",
+    "greetingMorning": "Good morning",
+    "greetingAfternoon": "Good afternoon",
+    "greetingEvening": "Good evening",
+    "streakLabel": "day streak",
+    "streakLabelOne": "day",
+    "todayCount": "today's dhikr",
+    "todayMinutes": "min today",
+    "startReminder": "Begin your daily dhikr",
+    "flameActive": "🔥",
+    "flameIdle": "✨"
   },
   "setup": {
     "fixedMode": "Fixed Count",

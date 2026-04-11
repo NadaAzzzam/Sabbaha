@@ -6,7 +6,17 @@
     "history": "السجل",
     "settings": "الإعدادات",
     "times": "مرة",
-    "free": "حر"
+    "free": "حر",
+    "greetingMorning": "صباح الخير",
+    "greetingAfternoon": "مساء الخير",
+    "greetingEvening": "مساء الخير",
+    "streakLabel": "يوم متواصل",
+    "streakLabelOne": "يوم",
+    "todayCount": "تسبيحات اليوم",
+    "todayMinutes": "دقيقة",
+    "startReminder": "ابدأ ذكرك اليومي",
+    "flameActive": "🔥",
+    "flameIdle": "✨"
   },
   "setup": {
     "fixedMode": "عد محدد",
