@@ -5,6 +5,7 @@ import { mmkvStorage } from '../utils/mmkv';
 export type Language = 'ar' | 'en';
 export type Theme = 'dark' | 'light';
 export type HapticIntensity = 'light' | 'medium' | 'strong';
+export type SoundVolume = 'low' | 'medium' | 'high';
 
 interface SettingsState {
   language: Language;
@@ -12,11 +13,13 @@ interface SettingsState {
   hapticsEnabled: boolean;
   hapticIntensity: HapticIntensity;
   soundEnabled: boolean;
+  soundVolume: SoundVolume;
   setLanguage: (lang: Language) => void;
   setTheme: (theme: Theme) => void;
   setHapticsEnabled: (v: boolean) => void;
   setHapticIntensity: (v: HapticIntensity) => void;
   setSoundEnabled: (v: boolean) => void;
+  setSoundVolume: (v: SoundVolume) => void;
 }
 
 export const useSettingsStore = create<SettingsState>()(
@@ -27,11 +30,13 @@ export const useSettingsStore = create<SettingsState>()(
       hapticsEnabled: true,
       hapticIntensity: 'medium',
       soundEnabled: true,
+      soundVolume: 'medium',
       setLanguage: lang => set({ language: lang }),
       setTheme: theme => set({ theme }),
       setHapticsEnabled: v => set({ hapticsEnabled: v }),
       setHapticIntensity: v => set({ hapticIntensity: v }),
       setSoundEnabled: v => set({ soundEnabled: v }),
+      setSoundVolume: v => set({ soundVolume: v }),
     }),
     {
       name: 'habbah-settings',

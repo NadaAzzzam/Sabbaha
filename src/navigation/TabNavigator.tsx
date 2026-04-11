@@ -12,7 +12,7 @@ import type { TabParamList } from './types';
 
 const Tab = createBottomTabNavigator<TabParamList>();
 
-const TAB_CONTENT_HEIGHT = 60;
+const TAB_CONTENT_HEIGHT = 56; // icon + label fit vertically inside this
 
 const TabIcon = ({
   emoji,
@@ -26,6 +26,9 @@ const TabIcon = ({
   colors: ReturnType<typeof useTheme>;
 }) => (
   <View style={styles.tabItem}>
+    {focused && (
+      <View style={[styles.activePill, { backgroundColor: colors.accent }]} />
+    )}
     <AppText
       style={[
         styles.tabEmoji,
@@ -43,7 +46,6 @@ const TabIcon = ({
     >
       {label}
     </AppText>
-    {focused && <View style={[styles.activeDot, { backgroundColor: colors.accent }]} />}
   </View>
 );
 
@@ -57,6 +59,7 @@ export const TabNavigator = () => {
 
   return (
     <Tab.Navigator
+      id="MainTabs"
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
@@ -75,13 +78,10 @@ export const TabNavigator = () => {
         tabBarShowLabel: false,
         tabBarItemStyle: {
           height: TAB_CONTENT_HEIGHT,
-          paddingVertical: 0,
-        },
-        tabBarIconStyle: {
-          // Let the icon component size itself — no forced margins
-          width: '100%',
-          height: TAB_CONTENT_HEIGHT,
-          marginTop: 0,
+          justifyContent: 'center',
+          alignItems: 'center',
+          paddingTop: 0,
+          paddingBottom: 0,
         },
       }}
     >
@@ -133,10 +133,18 @@ export const TabNavigator = () => {
 
 const styles = StyleSheet.create({
   tabItem: {
-    flex: 1,
-    alignSelf: 'stretch',
+    height: TAB_CONTENT_HEIGHT,
+    width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
+    paddingTop: 6,
+  },
+  activePill: {
+    position: 'absolute',
+    top: 0,
+    width: 32,
+    height: 3,
+    borderRadius: 2,
   },
   tabEmoji: {
     fontSize: 22,
@@ -150,11 +158,5 @@ const styles = StyleSheet.create({
     marginTop: 3,
     textAlign: 'center',
     includeFontPadding: false,
-  },
-  activeDot: {
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-    marginTop: 4,
   },
 });

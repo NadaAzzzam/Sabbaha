@@ -1,13 +1,19 @@
 import { useEffect, useRef } from 'react';
 import { Platform } from 'react-native';
 import Sound from 'react-native-sound';
-import { useSettingsStore } from '../stores/useSettingsStore';
+import { useSettingsStore, type SoundVolume } from '../stores/useSettingsStore';
 
 // Allow playing over silent mode / in background on iOS
 Sound.setCategory('Playback', true);
 
 /** ms between the two tap plays on session complete */
 const COMPLETE_DOUBLE_TAP_GAP_MS = 160;
+
+const VOLUME_MAP: Record<SoundVolume, number> = {
+  low: 0.35,
+  medium: 0.7,
+  high: 1.0,
+};
 
 type SoundName = 'tap';
 
@@ -21,7 +27,6 @@ function loadSound(name: SoundName): Sound | null {
     const s = new Sound(filename, Sound.MAIN_BUNDLE, err => {
       if (err) console.warn(`[Sound] failed to load ${name}:`, err);
     });
-    s.setVolume(1);
     return s;
   } catch {
     return null;
@@ -30,6 +35,7 @@ function loadSound(name: SoundName): Sound | null {
 
 export const useSound = () => {
   const soundEnabled = useSettingsStore(s => s.soundEnabled);
+  const soundVolume = useSettingsStore(s => s.soundVolume);
   const tapRef = useRef<Sound | null>(null);
   const completeSecondTapRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -43,10 +49,15 @@ export const useSound = () => {
     };
   }, []);
 
+  useEffect(() => {
+    tapRef.current?.setVolume(VOLUME_MAP[soundVolume]);
+  }, [soundVolume]);
+
   const playTap = () => {
     if (!soundEnabled) return;
     const s = tapRef.current;
     if (!s) return;
+    s.setVolume(VOLUME_MAP[soundVolume]);
     // stop resets position so rapid taps don't stack
     s.stop(() => s.play());
   };
@@ -55,6 +66,7 @@ export const useSound = () => {
     if (!soundEnabled) return;
     const s = tapRef.current;
     if (!s) return;
+    s.setVolume(VOLUME_MAP[soundVolume]);
     if (completeSecondTapRef.current) {
       clearTimeout(completeSecondTapRef.current);
       completeSecondTapRef.current = null;

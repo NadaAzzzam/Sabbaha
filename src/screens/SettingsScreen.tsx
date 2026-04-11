@@ -16,6 +16,7 @@ import {
   type Language,
   type Theme,
   type HapticIntensity,
+  type SoundVolume,
 } from '../stores/useSettingsStore';
 import { useHistoryStore } from '../stores/useHistoryStore';
 import { spacing, radius } from '../theme/spacing';
@@ -82,11 +83,13 @@ export const SettingsScreen = () => {
     hapticsEnabled,
     hapticIntensity,
     soundEnabled,
+    soundVolume,
     language,
     theme,
     setHapticsEnabled,
     setHapticIntensity,
     setSoundEnabled,
+    setSoundVolume,
     setLanguage,
     setTheme,
   } = useSettingsStore();
@@ -129,16 +132,6 @@ export const SettingsScreen = () => {
             />
           </Row>
 
-          {/* Sound toggle */}
-          <Row label={t('settings.sound')} colors={colors}>
-            <Switch
-              value={soundEnabled}
-              onValueChange={setSoundEnabled}
-              trackColor={{ false: colors.border, true: colors.accent }}
-              thumbColor={soundEnabled ? '#1B3A2D' : colors.textMuted}
-            />
-          </Row>
-
           {/* Haptic intensity */}
           {hapticsEnabled && (
             <Row label={t('settings.intensity')} colors={colors}>
@@ -150,6 +143,32 @@ export const SettingsScreen = () => {
                 ]}
                 selected={hapticIntensity}
                 onSelect={v => setHapticIntensity(v as HapticIntensity)}
+                colors={colors}
+              />
+            </Row>
+          )}
+
+          {/* Sound toggle */}
+          <Row label={t('settings.sound')} colors={colors}>
+            <Switch
+              value={soundEnabled}
+              onValueChange={setSoundEnabled}
+              trackColor={{ false: colors.border, true: colors.accent }}
+              thumbColor={soundEnabled ? '#1B3A2D' : colors.textMuted}
+            />
+          </Row>
+
+          {/* Sound volume */}
+          {soundEnabled && (
+            <Row label={t('settings.soundVolume')} colors={colors}>
+              <SegmentGroup
+                options={[
+                  { label: t('settings.soundVolumeLow'), value: 'low' },
+                  { label: t('settings.soundVolumeMedium'), value: 'medium' },
+                  { label: t('settings.soundVolumeHigh'), value: 'high' },
+                ]}
+                selected={soundVolume}
+                onSelect={v => setSoundVolume(v as SoundVolume)}
                 colors={colors}
               />
             </Row>
