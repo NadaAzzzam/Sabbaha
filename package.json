@@ -7,6 +7,8 @@
     "android:reset-build": "node scripts/android-reset-build.js",
     "gradle": "node scripts/gradle.js",
     "gradle:stop": "node scripts/gradle-stop.js",
+    "gradle:clear-kotlin-cache": "node scripts/gradle-clear-kotlin-dsl-cache.js",
+    "gradle:unlock": "node scripts/gradle-unlock-build-logic.js",
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",

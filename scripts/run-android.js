@@ -113,7 +113,7 @@ if (sdk && !fs.existsSync(adb)) {
   );
 }
 
-const javaHome = resolveJavaHomeForAndroidBuild();
+const javaHome = resolveJavaHomeForAndroidBuild(projectRoot);
 if (javaHome) {
   env.JAVA_HOME = javaHome;
   const javaBin = path.join(javaHome, 'bin');

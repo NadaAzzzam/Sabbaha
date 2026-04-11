@@ -5,3 +5,7 @@ sdk.dir=C:/Users/YOUR_USER/AppData/Local/Android/Sdk
 
 # If Gradle says 'node' is not recognized (codegen tasks), set your real node.exe path:
 # node.executable=C:/Program Files/nodejs/node.exe
+
+# Optional: JDK 17 home for the Gradle daemon (AGP javac). Use forward slashes. Scripts (gradle.js / gradlew.bat) pick this up after JAVA_HOME.
+# If you use a real JDK 17 here, you can set org.gradle.java.installations.auto-download=false in gradle.properties to skip Foojay downloads.
+# jdk.dir=C:/Program Files/Eclipse Adoptium/jdk-17.0.14.7-hotspot

@@ -254,7 +254,7 @@ export const HomeScreen = () => {
         >
           <View style={[styles.modalSheet, { backgroundColor: colors.surface }]}>
             <View style={[styles.sheetHandle, { backgroundColor: colors.border }]} />
-            <AppText arabic style={[typography.arabicMedium, { color: colors.text, marginBottom: spacing.lg, textAlign: 'center' }]}>
+            <AppText arabic style={[typography.arabicMedium, styles.modalTitle, { color: colors.text }]}>
               {t('custom.title')}
             </AppText>
 
@@ -323,9 +323,9 @@ const styles = StyleSheet.create({
   },
   headerRow: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'space-between',
-    gap: spacing.md,
+    gap: spacing.xl,
   },
   greetingText: {
     fontSize: 14,
@@ -479,6 +479,10 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     alignSelf: 'center',
     marginBottom: spacing.md,
+  },
+  modalTitle: {
+    marginBottom: spacing.lg,
+    textAlign: 'center',
   },
   input: {
     height: 52,

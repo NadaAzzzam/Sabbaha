@@ -1,0 +1,53 @@
+diff --git a/node_modules/@react-native/gradle-plugin/settings.gradle.kts b/node_modules/@react-native/gradle-plugin/settings.gradle.kts
+--- a/node_modules/@react-native/gradle-plugin/settings.gradle.kts
++++ b/node_modules/@react-native/gradle-plugin/settings.gradle.kts
+@@ -13,6 +13,7 @@
+   }
+ }
+ 
+-plugins { id("org.gradle.toolchains.foojay-resolver-convention").version("0.5.0") }
++// Sabbaha: foojay-resolver-convention hits api.foojay.io with stale package IDs and hangs/fails.
++// Toolchain 17 is resolved from locally installed JDKs (e.g. Android Studio jbr, JAVA_HOME).
+ 
+ include(
+diff --git a/node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/build.gradle.kts b/node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/build.gradle.kts
+--- a/node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/build.gradle.kts
++++ b/node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/build.gradle.kts
+@@ -61,5 +61,6 @@
+ java { targetCompatibility = JavaVersion.VERSION_11 }
+ 
+-kotlin { jvmToolchain(17) }
++// Sabbaha: omit jvmToolchain(17) - use Gradle JVM (scripts/gradle.js). Toolchain 17 + no Foojay
++// fails when only JDK 21 (e.g. Android Studio jbr) is installed.
+ 
+ tasks.withType<KotlinCompile>().configureEach {
+diff --git a/node_modules/@react-native/gradle-plugin/settings-plugin/build.gradle.kts b/node_modules/@react-native/gradle-plugin/settings-plugin/build.gradle.kts
+--- a/node_modules/@react-native/gradle-plugin/settings-plugin/build.gradle.kts
++++ b/node_modules/@react-native/gradle-plugin/settings-plugin/build.gradle.kts
+@@ -51,5 +51,5 @@
+ java { targetCompatibility = JavaVersion.VERSION_11 }
+ 
+-kotlin { jvmToolchain(17) }
++// Sabbaha: omit jvmToolchain(17) - use Gradle JVM (scripts/gradle.js).
+ 
+ tasks.withType<KotlinCompile>().configureEach {
+diff --git a/node_modules/@react-native/gradle-plugin/shared/build.gradle.kts b/node_modules/@react-native/gradle-plugin/shared/build.gradle.kts
+--- a/node_modules/@react-native/gradle-plugin/shared/build.gradle.kts
++++ b/node_modules/@react-native/gradle-plugin/shared/build.gradle.kts
+@@ -30,5 +30,5 @@
+ java { targetCompatibility = JavaVersion.VERSION_11 }
+ 
+-kotlin { jvmToolchain(17) }
++// Sabbaha: omit jvmToolchain(17) - use Gradle JVM (scripts/gradle.js).
+ 
+ tasks.withType<KotlinCompile>().configureEach {
+diff --git a/node_modules/@react-native/gradle-plugin/shared-testutil/build.gradle.kts b/node_modules/@react-native/gradle-plugin/shared-testutil/build.gradle.kts
+--- a/node_modules/@react-native/gradle-plugin/shared-testutil/build.gradle.kts
++++ b/node_modules/@react-native/gradle-plugin/shared-testutil/build.gradle.kts
+@@ -24,5 +24,5 @@
+ java { targetCompatibility = JavaVersion.VERSION_11 }
+ 
+-kotlin { jvmToolchain(17) }
++// Sabbaha: omit jvmToolchain(17) - use Gradle JVM (scripts/gradle.js).
+ 
+ tasks.withType<KotlinCompile>().configureEach {

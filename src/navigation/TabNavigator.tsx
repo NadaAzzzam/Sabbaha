@@ -12,7 +12,7 @@ import type { TabParamList } from './types';
 
 const Tab = createBottomTabNavigator<TabParamList>();
 
-const TAB_CONTENT_HEIGHT = 56; // icon + label fit vertically inside this
+const TAB_CONTENT_HEIGHT = 60;
 
 const TabIcon = ({
   emoji,
@@ -26,9 +26,6 @@ const TabIcon = ({
   colors: ReturnType<typeof useTheme>;
 }) => (
   <View style={styles.tabItem}>
-    {focused && (
-      <View style={[styles.activePill, { backgroundColor: colors.accent }]} />
-    )}
     <AppText
       style={[
         styles.tabEmoji,
@@ -46,12 +43,36 @@ const TabIcon = ({
     >
       {label}
     </AppText>
+    {focused && <View style={[styles.activeDot, { backgroundColor: colors.accent }]} />}
   </View>
 );
 
-export const TabNavigator = () => {
+function HomeTabBarIcon({ focused }: { focused: boolean }) {
   const colors = useTheme();
   const { t } = useTranslation();
+  return (
+    <TabIcon emoji="📿" label={t('home.title')} focused={focused} colors={colors} />
+  );
+}
+
+function HistoryTabBarIcon({ focused }: { focused: boolean }) {
+  const colors = useTheme();
+  const { t } = useTranslation();
+  return (
+    <TabIcon emoji="📊" label={t('history.title')} focused={focused} colors={colors} />
+  );
+}
+
+function SettingsTabBarIcon({ focused }: { focused: boolean }) {
+  const colors = useTheme();
+  const { t } = useTranslation();
+  return (
+    <TabIcon emoji="⚙️" label={t('settings.title')} focused={focused} colors={colors} />
+  );
+}
+
+export const TabNavigator = () => {
+  const colors = useTheme();
   const insets = useSafeAreaInsets();
 
   const bottomInset = insets.bottom > 0 ? insets.bottom : Platform.OS === 'android' ? 8 : 0;
@@ -59,7 +80,7 @@ export const TabNavigator = () => {
 
   return (
     <Tab.Navigator
-      id="MainTabs"
+      id="bottom-tabs"
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
@@ -78,54 +99,30 @@ export const TabNavigator = () => {
         tabBarShowLabel: false,
         tabBarItemStyle: {
           height: TAB_CONTENT_HEIGHT,
-          justifyContent: 'center',
-          alignItems: 'center',
-          paddingTop: 0,
-          paddingBottom: 0,
+          paddingVertical: 0,
+        },
+        tabBarIconStyle: {
+          // Let the icon component size itself — no forced margins
+          width: '100%',
+          height: TAB_CONTENT_HEIGHT,
+          marginTop: 0,
         },
       }}
     >
       <Tab.Screen
         name="Home"
         component={HomeScreen}
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <TabIcon
-              emoji="📿"
-              label={t('home.title')}
-              focused={focused}
-              colors={colors}
-            />
-          ),
-        }}
+        options={{ tabBarIcon: HomeTabBarIcon }}
       />
       <Tab.Screen
         name="History"
         component={HistoryScreen}
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <TabIcon
-              emoji="📊"
-              label={t('history.title')}
-              focused={focused}
-              colors={colors}
-            />
-          ),
-        }}
+        options={{ tabBarIcon: HistoryTabBarIcon }}
       />
       <Tab.Screen
         name="Settings"
         component={SettingsScreen}
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <TabIcon
-              emoji="⚙️"
-              label={t('settings.title')}
-              focused={focused}
-              colors={colors}
-            />
-          ),
-        }}
+        options={{ tabBarIcon: SettingsTabBarIcon }}
       />
     </Tab.Navigator>
   );
@@ -133,18 +130,10 @@ export const TabNavigator = () => {
 
 const styles = StyleSheet.create({
   tabItem: {
-    height: TAB_CONTENT_HEIGHT,
-    width: '100%',
+    flex: 1,
+    alignSelf: 'stretch',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: 6,
-  },
-  activePill: {
-    position: 'absolute',
-    top: 0,
-    width: 32,
-    height: 3,
-    borderRadius: 2,
   },
   tabEmoji: {
     fontSize: 22,
@@ -158,5 +147,11 @@ const styles = StyleSheet.create({
     marginTop: 3,
     textAlign: 'center',
     includeFontPadding: false,
+  },
+  activeDot: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    marginTop: 4,
   },
 });

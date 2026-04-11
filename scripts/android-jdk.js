@@ -72,24 +72,86 @@ function isUsableJdkHome(dir) {
   return major == null || major <= ANDROID_BUILD_MAX_JAVA_MAJOR;
 }
 
-/**
- * @returns {string|null} JAVA_HOME path, or null if none found
- */
-function resolveJavaHomeForAndroidBuild() {
-  const envJh = process.env.JAVA_HOME;
-  if (isValidJdkHome(envJh)) {
-    const major = javaMajorVersion(envJh);
-    if (major == null || major <= ANDROID_BUILD_MAX_JAVA_MAJOR) {
-      return envJh;
-    }
-    console.warn(
-      `\n[android] JAVA_HOME is JDK ${major}. Android native builds often fail on JDK 22+ (restricted APIs). ` +
-        `Using a JDK 17–21 instead (e.g. Android Studio …\\jbr) if found.\n`,
-    );
+/** `jdk.dir` from android/local.properties (Android Studio / manual). */
+function readJdkDirFromLocalProperties(projectRoot) {
+  if (!projectRoot) {
+    return null;
   }
+  const lp = path.join(projectRoot, 'android', 'local.properties');
+  if (!fs.existsSync(lp)) {
+    return null;
+  }
+  try {
+    const text = fs.readFileSync(lp, 'utf8');
+    for (const rawLine of text.split(/\r?\n/)) {
+      const line = rawLine.trim();
+      if (!line || line.startsWith('#')) {
+        continue;
+      }
+      const i = line.indexOf('=');
+      if (i < 0) {
+        continue;
+      }
+      if (line.slice(0, i).trim() !== 'jdk.dir') {
+        continue;
+      }
+      let val = line.slice(i + 1).trim();
+      val = val.replace(/^["']|["']$/g, '');
+      return val || null;
+    }
+  } catch {
+    /* ignore */
+  }
+  return null;
+}
 
+/**
+ * Among ordered candidates, pick JDK 17 if present, else newest allowed (21 … 18).
+ * @param {string[]} orderedCandidates
+ * @returns {string|null}
+ */
+function pickPreferredJavaHome(orderedCandidates) {
+  const seen = new Set();
+  const list = [];
+  for (const raw of orderedCandidates) {
+    if (!raw) {
+      continue;
+    }
+    let abs;
+    try {
+      abs = path.resolve(raw);
+    } catch {
+      continue;
+    }
+    if (seen.has(abs)) {
+      continue;
+    }
+    seen.add(abs);
+    if (!isUsableJdkHome(abs)) {
+      continue;
+    }
+    list.push(abs);
+  }
+  if (!list.length) {
+    return null;
+  }
+  const scored = list.map(p => ({ p, m: javaMajorVersion(p) }));
+  const v17 = scored.filter(x => x.m === 17);
+  if (v17.length) {
+    return v17[0].p;
+  }
+  for (const maj of [21, 20, 19, 18]) {
+    const hit = scored.find(x => x.m === maj);
+    if (hit) {
+      return hit.p;
+    }
+  }
+  const unknown = scored.find(x => x.m == null);
+  return unknown ? unknown.p : list[0];
+}
+
+function collectScanCandidates() {
   const candidates = [];
-
   if (isWin) {
     const pf = process.env.ProgramFiles || 'C:\\Program Files';
     const la = process.env.LOCALAPPDATA || '';
@@ -131,17 +193,42 @@ function resolveJavaHomeForAndroidBuild() {
       candidates.push(d);
     }
   }
+  return candidates;
+}
 
-  for (const c of candidates) {
-    if (isUsableJdkHome(c)) {
-      return c;
+/**
+ * @param {string} [projectRoot] repo root (parent of `android/`). Enables `android/local.properties` → `jdk.dir`.
+ * @returns {string|null} JAVA_HOME path, or null if none found
+ */
+function resolveJavaHomeForAndroidBuild(projectRoot) {
+  const envJh = process.env.JAVA_HOME;
+  if (isValidJdkHome(envJh)) {
+    const major = javaMajorVersion(envJh);
+    if (major == null || major <= ANDROID_BUILD_MAX_JAVA_MAJOR) {
+      return envJh;
     }
+    console.warn(
+      `\n[android] JAVA_HOME is JDK ${major}. Android native builds often fail on JDK 22+ (restricted APIs). ` +
+        `Using a JDK 17–21 instead (e.g. Android Studio …\\jbr) if found.\n`,
+    );
   }
-  return null;
+
+  const fromLocal = readJdkDirFromLocalProperties(projectRoot);
+  if (fromLocal && isUsableJdkHome(fromLocal)) {
+    return path.resolve(fromLocal);
+  }
+  if (fromLocal && !isValidJdkHome(fromLocal)) {
+    console.warn(
+      `\n[android] android/local.properties jdk.dir is missing or invalid: ${fromLocal}\n`,
+    );
+  }
+
+  return pickPreferredJavaHome(collectScanCandidates());
 }
 
 module.exports = {
   resolveJavaHomeForAndroidBuild,
+  readJdkDirFromLocalProperties,
   javaMajorVersion,
   isValidJdkHome,
   ANDROID_BUILD_MAX_JAVA_MAJOR,

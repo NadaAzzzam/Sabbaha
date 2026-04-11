@@ -1,5 +1,9 @@
 pluginManagement { includeBuild("../node_modules/@react-native/gradle-plugin") }
-plugins { id("com.facebook.react.settings") }
+plugins {
+    id("com.facebook.react.settings")
+    // Provisions JDK 17 for AGP javac when the Gradle JVM is only 21 (e.g. Studio jbr). Use 1.0.0+ (older resolvers hit bad Disco IDs).
+    id("org.gradle.toolchains.foojay-resolver-convention").version("1.0.0")
+}
 
 // Peer of react-native-mmkv — must exist before :react-native-mmkv is configured.
 // Android autolink for this package is disabled in react-native.config.js to avoid duplicate include.
