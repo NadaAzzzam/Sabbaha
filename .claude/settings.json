@@ -16,7 +16,19 @@
       "Bash(cp -r /tmp/package \"d:/Work/Nada/Sabbaha/node_modules/esbuild\")",
       "Read(//c/Users/EGDEV07/**)",
       "Bash(pkill -f \"vite.js\")",
-      "Bash(node -e \"const p=require\\('d:/Work/Nada/Sabbaha/node_modules/react-native-reanimated/package.json'\\); console.log\\(JSON.stringify\\(p.exports?.['.']?.import || p.main, null, 2\\)\\)\")"
+      "Bash(node -e \"const p=require\\('d:/Work/Nada/Sabbaha/node_modules/react-native-reanimated/package.json'\\); console.log\\(JSON.stringify\\(p.exports?.['.']?.import || p.main, null, 2\\)\\)\")",
+      "Bash(cmd.exe /c \"tasklist /FI \\\\\"PID eq 30176\\\\\" /FI \\\\\"PID eq 31312\\\\\"\")",
+      "Bash(cmd.exe /c \"tasklist /FO CSV | findstr /I java\")",
+      "Bash(cmd.exe /c \"rmdir /S /Q \\\\\"%USERPROFILE%\\\\.gradle\\\\daemon\\\\\" && echo cleaned\")",
+      "Bash(cmd.exe /c \"taskkill /F /PID 36136 /PID 4516 2>&1 & tasklist /FO CSV | findstr /I java\")",
+      "Bash(cmd.exe /c \"del /F /Q \\\\\"D:\\\\Work\\\\Nada\\\\Sabbaha\\\\android\\\\.gradle\\\\noVersion\\\\buildLogic.lock\\\\\"\")",
+      "Bash(cmd.exe /c \"tasklist /FO CSV\")",
+      "Bash(cmd.exe /c \"tasklist /FO CSV 2>&1\")",
+      "Bash(powershell.exe -ExecutionPolicy Bypass -File \"D:\\\\Work\\\\Nada\\\\Sabbaha\\\\scripts\\\\find-java.ps1\")",
+      "Bash(powershell.exe -ExecutionPolicy Bypass -File \"D:\\\\Work\\\\Nada\\\\Sabbaha\\\\scripts\\\\fix-lock.ps1\")"
+    ],
+    "additionalDirectories": [
+      "d:\\Work\\Nada\\Sabbaha\\android\\.gradle\\noVersion"
     ]
   }
 }

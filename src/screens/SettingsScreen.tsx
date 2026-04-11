@@ -81,10 +81,12 @@ export const SettingsScreen = () => {
   const {
     hapticsEnabled,
     hapticIntensity,
+    soundEnabled,
     language,
     theme,
     setHapticsEnabled,
     setHapticIntensity,
+    setSoundEnabled,
     setLanguage,
     setTheme,
   } = useSettingsStore();
@@ -124,6 +126,16 @@ export const SettingsScreen = () => {
               onValueChange={setHapticsEnabled}
               trackColor={{ false: colors.border, true: colors.accent }}
               thumbColor={hapticsEnabled ? '#1B3A2D' : colors.textMuted}
+            />
+          </Row>
+
+          {/* Sound toggle */}
+          <Row label={t('settings.sound')} colors={colors}>
+            <Switch
+              value={soundEnabled}
+              onValueChange={setSoundEnabled}
+              trackColor={{ false: colors.border, true: colors.accent }}
+              thumbColor={soundEnabled ? '#1B3A2D' : colors.textMuted}
             />
           </Row>
 

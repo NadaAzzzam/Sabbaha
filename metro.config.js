@@ -38,6 +38,12 @@ const config = {
           filePath: require.resolve('react-native-web'),
         };
       }
+      if (platform === 'web' && moduleName === 'react-native-sound') {
+        return {
+          type: 'sourceFile',
+          filePath: require.resolve('./src/shims/react-native-sound.ts'),
+        };
+      }
       return context.resolveRequest(context, moduleName, platform);
     },
   },

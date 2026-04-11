@@ -96,12 +96,11 @@ export const HomeScreen = () => {
         data={allDhikr}
         keyExtractor={item => item.id}
         renderItem={({ item }) => (
-          <TouchableOpacity
-            onLongPress={() => handleLongPress(item)}
-            delayLongPress={600}
-          >
-            <DhikrCard item={item} onPress={() => handleSelectDhikr(item)} />
-          </TouchableOpacity>
+          <DhikrCard
+            item={item}
+            onPress={() => handleSelectDhikr(item)}
+            onLongPress={item.isCustom ? () => handleLongPress(item) : undefined}
+          />
         )}
         contentContainerStyle={styles.list}
         showsVerticalScrollIndicator={false}

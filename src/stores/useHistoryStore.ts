@@ -29,6 +29,7 @@ export const useHistoryStore = create<HistoryState>()(
     {
       name: 'habbah-history',
       storage: createJSONStorage(() => mmkvStorage),
+      partialize: (s) => ({ sessions: s.sessions }),
     },
   ),
 );

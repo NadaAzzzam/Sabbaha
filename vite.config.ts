@@ -40,9 +40,10 @@ const esbuildRnShimPlugin: EsbuildPlugin = {
       'react-native-svg': path.resolve(root, 'src/shims/react-native-svg.web.ts'),
       'react-native-haptic-feedback': path.resolve(root, 'src/shims/react-native-haptic-feedback.ts'),
       'react-native-mmkv': path.resolve(root, 'src/utils/mmkv.web.ts'),
+      'react-native-sound': path.resolve(root, 'src/shims/react-native-sound.ts'),
     };
     build.onResolve(
-      { filter: /^react-native-(screens|gesture-handler|reanimated|worklets|svg|haptic-feedback|mmkv)/ },
+      { filter: /^react-native-(screens|gesture-handler|reanimated|worklets|svg|haptic-feedback|mmkv|sound)/ },
       args => ({ path: aliasMap[args.path] ?? empty, namespace: 'file' }),
     );
   },
@@ -108,6 +109,7 @@ export default defineConfig({
       { find: 'react-native-reanimated', replacement: path.resolve(root, 'src/shims/react-native-reanimated.web.ts') },
       { find: 'react-native-worklets', replacement: empty },
       { find: 'react-native-svg', replacement: path.resolve(root, 'src/shims/react-native-svg.web.ts') },
+      { find: 'react-native-sound', replacement: path.resolve(root, 'src/shims/react-native-sound.ts') },
     ],
   },
   optimizeDeps: {
@@ -120,6 +122,7 @@ export default defineConfig({
       'react-native-reanimated',
       'react-native-worklets',
       'react-native-svg',
+      'react-native-sound',
     ],
     esbuildOptions: {
       jsx: 'automatic',

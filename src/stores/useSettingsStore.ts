@@ -11,10 +11,12 @@ interface SettingsState {
   theme: Theme;
   hapticsEnabled: boolean;
   hapticIntensity: HapticIntensity;
+  soundEnabled: boolean;
   setLanguage: (lang: Language) => void;
   setTheme: (theme: Theme) => void;
   setHapticsEnabled: (v: boolean) => void;
   setHapticIntensity: (v: HapticIntensity) => void;
+  setSoundEnabled: (v: boolean) => void;
 }
 
 export const useSettingsStore = create<SettingsState>()(
@@ -24,10 +26,12 @@ export const useSettingsStore = create<SettingsState>()(
       theme: 'dark',
       hapticsEnabled: true,
       hapticIntensity: 'medium',
+      soundEnabled: true,
       setLanguage: lang => set({ language: lang }),
       setTheme: theme => set({ theme }),
       setHapticsEnabled: v => set({ hapticsEnabled: v }),
       setHapticIntensity: v => set({ hapticIntensity: v }),
+      setSoundEnabled: v => set({ soundEnabled: v }),
     }),
     {
       name: 'habbah-settings',

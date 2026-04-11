@@ -6,131 +6,16 @@
 const { spawn, spawnSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
+const {
+  resolveJavaHomeForAndroidBuild,
+  javaMajorVersion,
+  ANDROID_BUILD_MAX_JAVA_MAJOR,
+} = require('./android-jdk');
+const { applyProjectLocalGradleUserHome } = require('./android-gradle-home');
 
 const isWin = process.platform === 'win32';
-const isMac = process.platform === 'darwin';
 const projectRoot = path.join(__dirname, '..');
 const extraArgs = process.argv.slice(2);
-
-function javaExecutable(javaHome) {
-  return path.join(javaHome, 'bin', isWin ? 'java.exe' : 'java');
-}
-
-function isValidJdkHome(dir) {
-  if (!dir || !fs.existsSync(dir)) {
-    return false;
-  }
-  return fs.existsSync(javaExecutable(dir));
-}
-
-/** Major version from $JAVA_HOME/release; null if unknown. */
-function javaMajorVersion(javaHome) {
-  if (!isValidJdkHome(javaHome)) {
-    return null;
-  }
-  const releaseFile = path.join(javaHome, 'release');
-  try {
-    if (!fs.existsSync(releaseFile)) {
-      return null;
-    }
-    const text = fs.readFileSync(releaseFile, 'utf8');
-    const m = text.match(/JAVA_VERSION="?(\d+)/);
-    if (m) {
-      return parseInt(m[1], 10);
-    }
-  } catch {
-    /* ignore */
-  }
-  return null;
-}
-
-/** AGP / CMake native config is unreliable on JDK 22+ (restricted System / JNI). Prefer 17–21. */
-const ANDROID_BUILD_MAX_JAVA_MAJOR = 21;
-
-function pushIfDir(list, dir) {
-  if (dir) {
-    list.push(dir);
-  }
-}
-
-function jdkDirsUnder(base) {
-  if (!base || !fs.existsSync(base)) {
-    return [];
-  }
-  try {
-    return fs
-      .readdirSync(base, { withFileTypes: true })
-      .filter(d => d.isDirectory())
-      .map(d => path.join(base, d.name));
-  } catch {
-    return [];
-  }
-}
-
-function resolveJavaHome() {
-  const envJh = process.env.JAVA_HOME;
-  if (isValidJdkHome(envJh)) {
-    const major = javaMajorVersion(envJh);
-    if (major == null || major <= ANDROID_BUILD_MAX_JAVA_MAJOR) {
-      return envJh;
-    }
-    console.warn(
-      `\n[android] JAVA_HOME is JDK ${major}. Android native builds often fail on JDK 22+ (restricted APIs). ` +
-        `Using a JDK 17–21 instead (e.g. Android Studio …\\jbr) if found.\n`,
-    );
-  }
-
-  const candidates = [];
-
-  if (isWin) {
-    const pf = process.env.ProgramFiles || 'C:\\Program Files';
-    const la = process.env.LOCALAPPDATA || '';
-    pushIfDir(
-      candidates,
-      path.join(pf, 'Android', 'Android Studio', 'jbr'),
-    );
-    pushIfDir(
-      candidates,
-      path.join(la, 'Programs', 'Android', 'Android Studio', 'jbr'),
-    );
-    const jetBrains = path.join(pf, 'JetBrains');
-    for (const d of jdkDirsUnder(jetBrains)) {
-      if (path.basename(d).startsWith('Android Studio')) {
-        pushIfDir(candidates, path.join(d, 'jbr'));
-      }
-    }
-    for (const base of [
-      path.join(pf, 'Microsoft'),
-      path.join(pf, 'Eclipse Adoptium'),
-      path.join(pf, 'Java'),
-      path.join(pf, 'Amazon Corretto'),
-    ]) {
-      candidates.push(...jdkDirsUnder(base));
-    }
-  } else if (isMac) {
-    pushIfDir(candidates, '/Applications/Android Studio.app/Contents/jbr');
-    pushIfDir(
-      candidates,
-      '/Applications/Android Studio.app/Contents/jbr/Contents/Home',
-    );
-    const jvms = '/Library/Java/JavaVirtualMachines';
-    for (const d of jdkDirsUnder(jvms)) {
-      pushIfDir(candidates, path.join(d, 'Contents', 'Home'));
-    }
-  } else {
-    pushIfDir(candidates, '/opt/android-studio/jbr');
-    for (const d of jdkDirsUnder('/usr/lib/jvm')) {
-      candidates.push(d);
-    }
-  }
-
-  for (const c of candidates) {
-    if (isValidJdkHome(c)) {
-      return c;
-    }
-  }
-  return null;
-}
 
 function resolveSdkHome() {
   const fromEnv = process.env.ANDROID_HOME || process.env.ANDROID_SDK_ROOT;
@@ -228,7 +113,7 @@ if (sdk && !fs.existsSync(adb)) {
   );
 }
 
-const javaHome = resolveJavaHome();
+const javaHome = resolveJavaHomeForAndroidBuild();
 if (javaHome) {
   env.JAVA_HOME = javaHome;
   const javaBin = path.join(javaHome, 'bin');
@@ -259,6 +144,14 @@ if (process.execPath && fs.existsSync(process.execPath)) {
   const nodeDir = path.dirname(process.execPath);
   env.PATH = `${nodeDir}${path.delimiter}${env.PATH || ''}`;
 }
+
+// Add android/ to PATH so the RN CLI can invoke gradlew.bat by name on Windows
+const androidDir = path.join(projectRoot, 'android');
+if (isWin && fs.existsSync(androidDir)) {
+  env.PATH = `${androidDir}${path.delimiter}${env.PATH || ''}`;
+}
+
+applyProjectLocalGradleUserHome(env, projectRoot);
 
 let rnCli;
 try {
@@ -297,11 +190,35 @@ function hasConnectedDevice(sdk) {
   if (!fs.existsSync(adb)) {
     return false;
   }
-  const r = spawnSync(adb, ['devices'], { encoding: 'utf8' });
+  const r = spawnSync(adb, ['devices'], { encoding: 'utf8', env });
   if (r.error || typeof r.stdout !== 'string') {
     return false;
   }
   return r.stdout.split(/\r?\n/).some(line => /^\S+\s+device\s*$/.test(line.trim()));
+}
+
+/** Stale "emulator-5554 offline" entries break installDebug; adb restart usually clears them. */
+function maybeRestartAdbWhenNoOnlineDevice(sdkForAdb, runEnv) {
+  const adbPath = path.join(sdkForAdb, 'platform-tools', isWin ? 'adb.exe' : 'adb');
+  if (!fs.existsSync(adbPath)) {
+    return;
+  }
+  const r = spawnSync(adbPath, ['devices'], { encoding: 'utf8', env: runEnv, windowsHide: true });
+  const out = `${r.stdout || ''}\n${r.stderr || ''}`;
+  const hasOnline = /^\S+\s+device\s*$/m.test(out);
+  if (hasOnline) {
+    return;
+  }
+  const looksStuck =
+    /\boffline\b/i.test(out) ||
+    /\bunauthorized\b/i.test(out) ||
+    /\bauthorizing\b/i.test(out);
+  if (!looksStuck && !/\S+\s+\S+/.test(out.replace(/^List of devices.*$/m, ''))) {
+    return;
+  }
+  console.log('[android] No online device in `adb devices` — restarting adb server…');
+  spawnSync(adbPath, ['kill-server'], { stdio: 'pipe', env: runEnv, windowsHide: true });
+  spawnSync(adbPath, ['start-server'], { stdio: 'pipe', env: runEnv, windowsHide: true });
 }
 
 /** Where AVD *.ini / *.avd live (same rules as the Android SDK tools). */
@@ -625,7 +542,29 @@ function ensureAndroidDevice(sdkForDevice) {
   );
 }
 
+if (sdk) {
+  maybeRestartAdbWhenNoOnlineDevice(sdk, env);
+}
+
 ensureAndroidDevice(sdk);
+
+// installDebug always needs a device; without one, Gradle can run for minutes then fail anyway.
+if (sdk && !hasConnectedDevice(sdk)) {
+  const emulatorExe = path.join(sdk, 'emulator', isWin ? 'emulator.exe' : 'emulator');
+  console.error(
+    '\n[android] No online device — not starting React Native / Gradle.\n' +
+      '  Fix `adb devices` first (each line should end with "device", not offline/unauthorized).\n\n' +
+      '  Emulator closes immediately or never appears:\n' +
+      '  • Android Studio → Device Manager → ⋮ on the AVD → Cold Boot Now or Wipe Data.\n' +
+      '  • Add a fresh AVD: Pixel, API 34, x86_64 (Google APIs / without Play Store often fewer issues).\n' +
+      '  • Windows: enable virtualization (WHPX/Hyper-V); update GPU drivers; try Software GLES in AVD settings.\n' +
+      `  • Run the emulator from a terminal and read errors:\n      "${emulatorExe}" -list-avds\n` +
+      `      "${emulatorExe}" -avd <name_from_list>\n\n` +
+      '  Physical device: USB debugging on, cable, authorize this PC when prompted.\n' +
+      '  Build APK only (no install): npm run gradle -- assembleDebug\n',
+  );
+  process.exit(1);
+}
 
 const result = spawnSync(
   process.execPath,

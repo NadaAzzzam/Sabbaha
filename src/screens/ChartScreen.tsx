@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -152,14 +152,15 @@ export const ChartScreen = () => {
   }, [dailyPoints, granularity]);
 
   // Trigger entrance animation when points change
-  const prevPointsKey = useRef('');
   const pointsKey = points.map(p => p.date).join(',');
-  if (pointsKey !== prevPointsKey.current) {
-    prevPointsKey.current = pointsKey;
+  const prevPointsKeyRef = useRef('');
+  useEffect(() => {
+    if (pointsKey === prevPointsKeyRef.current) return;
+    prevPointsKeyRef.current = pointsKey;
     animProgress.value = 0;
     animProgress.value = withTiming(1, { duration: 600, easing: Easing.out(Easing.cubic) });
     setSelectedIdx(null);
-  }
+  }, [pointsKey, animProgress]);
 
   const values = points.map(p => pointValue(p, metric));
   const maxVal = Math.max(...values, 1);

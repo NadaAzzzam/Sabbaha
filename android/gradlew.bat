@@ -40,6 +40,14 @@ set APP_HOME=%DIRNAME%
 @rem Resolve any "." and ".." in APP_HOME to make it shorter.
 for %%i in ("%APP_HOME%") do set APP_HOME=%%~fi
 
+@rem Sabbaha: when JAVA_HOME is JDK 22+, AGP Prefab/CMake fails; prefer 17–21 (same as scripts/android-jdk.js).
+set "SABBAHA_GRADLE_JDK="
+where node >nul 2>&1 && for /f "usebackq delims=" %%I in (`node "%APP_HOME%..\scripts\print-android-jdk.js" 2^>nul`) do set "SABBAHA_GRADLE_JDK=%%I"
+if defined SABBAHA_GRADLE_JDK set "JAVA_HOME=%SABBAHA_GRADLE_JDK%"
+
+@rem Sabbaha: project on D: + Gradle cache on C: cannot hardlink prefab libs; use GRADLE_USER_HOME on project drive.
+if not defined GRADLE_USER_HOME where node >nul 2>&1 && for /f "usebackq delims=" %%G in (`node "%APP_HOME%..\scripts\print-gradle-user-home.js" 2^>nul`) do set "GRADLE_USER_HOME=%%G"
+
 @rem Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
 set DEFAULT_JVM_OPTS="-Xmx64m" "-Xms64m"
 

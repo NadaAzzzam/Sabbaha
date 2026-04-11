@@ -23,6 +23,7 @@ import Animated, {
   withSequence,
   withTiming,
   withDelay,
+  withSpring,
 } from 'react-native-reanimated';
 import { ScreenWrapper } from '../components/ui/ScreenWrapper';
 import { AppText } from '../components/ui/AppText';
@@ -34,20 +35,21 @@ import {
   useSessionStore,
   getSessionActiveDurationMs,
 } from '../stores/useSessionStore';
-import { useSettingsStore } from '../stores/useSettingsStore';
+import { useSettingsStore, type Language } from '../stores/useSettingsStore';
 import { DEFAULT_DHIKR } from '../constants/defaultDhikr';
 import { useDhikrStore } from '../stores/useDhikrStore';
 import { spacing } from '../theme/spacing';
-import { typography } from '../theme/typography';
+import { typography, typographyTimer } from '../theme/typography';
 import { formatTimer, formatCount } from '../utils/formatters';
 import type { RootStackParamList } from '../navigation/types';
 
 const { width: SCREEN_W } = Dimensions.get('window');
+const RING_SIZE = SCREEN_W * 0.75;
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 type Route = RouteProp<RootStackParamList, 'Session'>;
 
-/** Owns the 1s tick so the rest of SessionScreen (SVG ring, layout) does not re-render every second. */
+// ─── Timer: isolated to its own component so SVG ring never re-renders on tick ───
 const SessionElapsedTimer = memo(function SessionElapsedTimer({
   startedAt,
   isPaused,
@@ -69,23 +71,51 @@ const SessionElapsedTimer = memo(function SessionElapsedTimer({
     return () => clearInterval(id);
   }, [isPaused]);
 
-  const elapsedSeconds = useMemo(() => {
+  const elapsed = useMemo(() => {
     void tick;
-    const now = Date.now();
     if (!startedAt) return 0;
+    const now = Date.now();
     let pauseMs = pausedAccumulatedMs;
-    if (isPaused && pauseStartedAt != null) {
-      pauseMs += now - pauseStartedAt;
-    }
+    if (isPaused && pauseStartedAt != null) pauseMs += now - pauseStartedAt;
     return Math.max(0, Math.floor((now - startedAt - pauseMs) / 1000));
   }, [tick, startedAt, isPaused, pauseStartedAt, pausedAccumulatedMs]);
 
   return (
     <View style={styles.timerRow}>
-      <AppText style={[typography.timer, { color: textColor }]}>
-        {formatTimer(elapsedSeconds)}
+      <AppText style={[typographyTimer, { color: textColor }]}>
+        {formatTimer(elapsed)}
       </AppText>
     </View>
+  );
+});
+
+// ─── Counter display: isolated so timer tick never re-renders the big number ───
+const CountDisplay = memo(function CountDisplay({
+  count,
+  targetCount,
+  language,
+  accentColor,
+  mutedColor,
+}: {
+  count: number;
+  targetCount: number;
+  language: Language;
+  accentColor: string;
+  mutedColor: string;
+}) {
+  const countStr = useMemo(() => formatCount(count, language), [count, language]);
+  const targetStr = useMemo(() => formatCount(targetCount, language), [targetCount, language]);
+  return (
+    <>
+      <AppText style={[typography.counterHero, { color: accentColor, marginTop: spacing.sm }]}>
+        {countStr}
+      </AppText>
+      {targetCount > 0 && (
+        <AppText style={[typography.counterSub, { color: mutedColor }]}>
+          / {targetStr}
+        </AppText>
+      )}
+    </>
   );
 });
 
@@ -96,6 +126,7 @@ export const SessionScreen = () => {
   const route = useRoute<Route>();
   const { dhikrId, targetCount } = route.params;
 
+  // Granular selectors — each only re-renders on its own slice
   const customDhikr = useDhikrStore(s => s.customDhikr);
   const item = useMemo(
     () => [...DEFAULT_DHIKR, ...customDhikr].find(d => d.id === dhikrId),
@@ -114,8 +145,10 @@ export const SessionScreen = () => {
   const addSession = useHistoryStore(s => s.addSession);
   const language = useSettingsStore(s => s.language);
 
+  // Reanimated shared values — never trigger JS re-renders
   const glowOpacity = useSharedValue(0);
   const pulseScale = useSharedValue(1);
+  const tapScale = useSharedValue(1);
 
   const [sessionHydrated, setSessionHydrated] = useState(() =>
     useSessionStore.persist.hasHydrated(),
@@ -124,13 +157,12 @@ export const SessionScreen = () => {
   useEffect(() => {
     if (useSessionStore.persist.hasHydrated()) {
       setSessionHydrated(true);
+      return;
     }
-    return useSessionStore.persist.onFinishHydration(() =>
-      setSessionHydrated(true),
-    );
+    return useSessionStore.persist.onFinishHydration(() => setSessionHydrated(true));
   }, []);
 
-  // After MMKV rehydrate: resume in-progress session if it matches this screen; else start fresh.
+  // Resume in-progress session or start fresh
   useEffect(() => {
     if (!sessionHydrated) return;
     const s = useSessionStore.getState();
@@ -147,13 +179,7 @@ export const SessionScreen = () => {
       return;
     }
     initSession(dhikrId, item?.arabicText ?? dhikrId, targetCount);
-  }, [
-    sessionHydrated,
-    dhikrId,
-    targetCount,
-    item?.arabicText,
-    initSession,
-  ]);
+  }, [sessionHydrated, dhikrId, targetCount, item?.arabicText, initSession]);
 
   const saveAndNavigate = useCallback(
     (count: number) => {
@@ -176,38 +202,60 @@ export const SessionScreen = () => {
 
   const triggerCompletionGlow = useCallback(() => {
     glowOpacity.value = withSequence(
-      withTiming(1, { duration: 200 }),
-      withDelay(600, withTiming(0, { duration: 800 })),
+      withTiming(1, { duration: 150 }),
+      withDelay(500, withTiming(0, { duration: 700 })),
     );
     pulseScale.value = withSequence(
-      withTiming(1.05, { duration: 150 }),
+      withTiming(1.08, { duration: 120 }),
       withTiming(1, { duration: 300 }),
     );
-  }, []);
+  }, [glowOpacity, pulseScale]);
 
+  const triggerTapFeedback = useCallback(() => {
+    tapScale.value = withSequence(
+      withTiming(0.96, { duration: 60 }),
+      withSpring(1, { damping: 12, stiffness: 200 }),
+    );
+  }, [tapScale]);
+
+  // Keep a ref so handleComplete closure doesn't stale
   const currentCountRef = useRef(currentCount);
   useEffect(() => { currentCountRef.current = currentCount; }, [currentCount]);
+
+  const isPausedRef = useRef(isPaused);
+  useEffect(() => { isPausedRef.current = isPaused; }, [isPaused]);
 
   const handleComplete = useCallback(
     (finalCount: number) => {
       triggerCompletionGlow();
-      setTimeout(() => saveAndNavigate(finalCount), 1500);
+      setTimeout(() => saveAndNavigate(finalCount), 1400);
     },
     [triggerCompletionGlow, saveAndNavigate],
   );
 
-  const { tap } = useCounter(handleComplete);
+  const { tap: counterTap } = useCounter(handleComplete);
 
-  const handleFinishFree = () => {
+  // Prevent taps while paused — block at this level so useCounter never fires
+  const tap = useCallback(() => {
+    if (isPausedRef.current) return;
+    triggerTapFeedback();
+    counterTap();
+  }, [counterTap, triggerTapFeedback]);
+
+  const handleFinishFree = useCallback(() => {
     saveAndNavigate(currentCountRef.current);
-  };
+  }, [saveAndNavigate]);
 
-  const handlePausePress = () => {
-    if (isPaused) {
+  const handlePausePress = useCallback(() => {
+    if (isPausedRef.current) {
       resume();
-    } else {
-      pause();
-      Alert.alert(t('session.exitTitle'), t('session.exitMessage'), [
+      return;
+    }
+    pause();
+    Alert.alert(
+      t('session.exitTitle'),
+      t('session.exitMessage'),
+      [
         {
           text: t('session.exitCancel'),
           onPress: () => resume(),
@@ -218,17 +266,19 @@ export const SessionScreen = () => {
           style: 'destructive',
           onPress: () => saveAndNavigate(currentCountRef.current),
         },
-      ]);
-    }
-  };
+      ],
+      { onDismiss: () => resume() },
+    );
+  }, [pause, resume, saveAndNavigate, t]);
 
   const progress = targetCount > 0 ? Math.min(currentCount / targetCount, 1) : 0;
 
-  const glowStyle = useAnimatedStyle(() => ({
-    opacity: glowOpacity.value,
-  }));
+  const glowStyle = useAnimatedStyle(() => ({ opacity: glowOpacity.value }));
   const scaleStyle = useAnimatedStyle(() => ({
     transform: [{ scale: pulseScale.value }],
+  }));
+  const tapScaleStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: tapScale.value }],
   }));
 
   return (
@@ -236,100 +286,90 @@ export const SessionScreen = () => {
       {/* Gold completion glow overlay */}
       <Animated.View
         pointerEvents="none"
-        style={[
-          StyleSheet.absoluteFillObject,
-          { backgroundColor: colors.accentGlow },
-          glowStyle,
-        ]}
+        style={[StyleSheet.absoluteFill, { backgroundColor: colors.accentGlow }, glowStyle]}
       />
 
-      <TouchableWithoutFeedback onPress={tap}>
-        <View style={styles.tapArea}>
-          {/* Progress ring + counter */}
-          <Animated.View style={[styles.centerContent, scaleStyle]}>
-            {targetCount > 0 && (
-              <View style={styles.ringWrapper}>
-                <ProgressRing
-                  size={SCREEN_W * 0.75}
-                  progress={progress}
-                  accentColor={colors.accent}
-                  trackColor={colors.surface}
-                  strokeWidth={8}
-                />
-              </View>
-            )}
+      {/* Tap handler must not wrap bottom buttons — on Android the parent steals touches from nested Touchables. */}
+      <View style={styles.tapArea}>
+        <TouchableWithoutFeedback onPress={tap}>
+          <View style={styles.tapSurface}>
+            {/* Center: ring + dhikr text + counter */}
+            <Animated.View style={[styles.centerContent, scaleStyle]}>
+              {targetCount > 0 && (
+                <View style={styles.ringWrapper}>
+                  <ProgressRing
+                    size={RING_SIZE}
+                    progress={progress}
+                    accentColor={colors.accent}
+                    trackColor={colors.surface}
+                    strokeWidth={8}
+                  />
+                </View>
+              )}
 
-            {/* Dhikr text */}
-            <AppText
-              arabic
-              style={[
-                typography.arabicMedium,
-                { color: colors.textSecondary, textAlign: 'center' },
-              ]}
-            >
-              {item?.arabicText ?? dhikrId}
-            </AppText>
-
-            {/* Counter */}
-            <AppText
-              style={[
-                typography.counterHero,
-                { color: colors.accent, marginTop: spacing.sm },
-              ]}
-            >
-              {formatCount(currentCount, language)}
-            </AppText>
-
-            {targetCount > 0 && (
               <AppText
-                style={[typography.counterSub, { color: colors.textMuted }]}
+                arabic
+                style={[
+                  typography.arabicMedium,
+                  { color: colors.textSecondary, textAlign: 'center' },
+                ]}
               >
-                / {formatCount(targetCount, language)}
+                {item?.arabicText ?? dhikrId}
               </AppText>
-            )}
-          </Animated.View>
 
-          <SessionElapsedTimer
-            startedAt={startedAt}
-            isPaused={isPaused}
-            pauseStartedAt={pauseStartedAt}
-            pausedAccumulatedMs={pausedAccumulatedMs}
-            textColor={colors.textMuted}
-          />
+              <Animated.View style={tapScaleStyle}>
+                <CountDisplay
+                  count={currentCount}
+                  targetCount={targetCount}
+                  language={language}
+                  accentColor={colors.accent}
+                  mutedColor={colors.textMuted}
+                />
+              </Animated.View>
+            </Animated.View>
 
-          {/* Bottom controls */}
-          <View style={styles.bottomRow}>
-            {/* Pause / exit */}
+            <SessionElapsedTimer
+              startedAt={startedAt}
+              isPaused={isPaused}
+              pauseStartedAt={pauseStartedAt}
+              pausedAccumulatedMs={pausedAccumulatedMs}
+              textColor={colors.textMuted}
+            />
+          </View>
+        </TouchableWithoutFeedback>
+
+        <View style={styles.bottomRow} pointerEvents="box-none">
+          <TouchableOpacity
+            onPress={handlePausePress}
+            style={[styles.pauseBtn, { backgroundColor: colors.surface }]}
+            hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+          >
+            <AppText style={{ color: colors.textSecondary, fontSize: 22 }}>
+              {isPaused ? '▶' : '⏸'}
+            </AppText>
+          </TouchableOpacity>
+
+          {targetCount === 0 && (
             <TouchableOpacity
-              onPress={handlePausePress}
-              style={[styles.pauseBtn, { backgroundColor: colors.surface }]}
-              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              onPress={handleFinishFree}
+              style={[styles.finishBtn, { backgroundColor: colors.surface, borderColor: colors.accent }]}
             >
-              <AppText style={{ color: colors.textSecondary, fontSize: 22 }}>
-                {isPaused ? '▶' : '⏸'}
+              <AppText arabic style={[typography.arabicSmall, { color: colors.accent }]}>
+                {t('session.finish')}
               </AppText>
             </TouchableOpacity>
-
-            {/* Finish for free mode */}
-            {targetCount === 0 && (
-              <TouchableOpacity
-                onPress={handleFinishFree}
-                style={[styles.finishBtn, { backgroundColor: colors.surface, borderColor: colors.accent }]}
-              >
-                <AppText arabic style={[typography.arabicSmall, { color: colors.accent }]}>
-                  {t('session.finish')}
-                </AppText>
-              </TouchableOpacity>
-            )}
-          </View>
+          )}
         </View>
-      </TouchableWithoutFeedback>
+      </View>
     </ScreenWrapper>
   );
 };
 
 const styles = StyleSheet.create({
   tapArea: {
+    flex: 1,
+  },
+  tapSurface: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
@@ -355,9 +395,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.xl,
   },
   pauseBtn: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 52,
+    height: 52,
+    borderRadius: 26,
     alignItems: 'center',
     justifyContent: 'center',
   },

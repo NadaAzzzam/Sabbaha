@@ -48,6 +48,7 @@
   "settings": {
     "title": "Settings",
     "haptics": "Haptic Feedback",
+    "sound": "Sounds",
     "hapticsOn": "On",
     "hapticsOff": "Off",
     "intensity": "Haptic Intensity",

@@ -114,7 +114,14 @@ case "$( uname )" in                #(
   NONSTOP* )        nonstop=true ;;
 esac
 
-
+# Sabbaha: when JAVA_HOME is JDK 22+, AGP Prefab/CMake fails; prefer 17–21 (same as scripts/android-jdk.js).
+if command -v node >/dev/null 2>&1; then
+    SABBAHA_GRADLE_JDK=$(node "$APP_HOME/../scripts/print-android-jdk.js" 2>/dev/null || true)
+    if [ -n "$SABBAHA_GRADLE_JDK" ]; then
+        JAVA_HOME="$SABBAHA_GRADLE_JDK"
+        export JAVA_HOME
+    fi
+fi
 
 # Determine the Java command to use to start the JVM.
 if [ -n "$JAVA_HOME" ] ; then

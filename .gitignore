@@ -35,6 +35,9 @@ local.properties
 !debug.keystore
 .kotlin/
 
+# Local Gradle cache when project lives on a different drive than %USERPROFILE% (see scripts/android-gradle-home.js)
+.gradle-user-home/
+
 # node.js
 #
 node_modules/

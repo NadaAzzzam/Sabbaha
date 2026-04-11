@@ -48,6 +48,7 @@
   "settings": {
     "title": "الإعدادات",
     "haptics": "الاهتزاز",
+    "sound": "الأصوات",
     "hapticsOn": "مفعّل",
     "hapticsOff": "معطّل",
     "intensity": "شدة الاهتزاز",

@@ -1,4 +1,4 @@
-import { Platform } from 'react-native';
+import { Platform, type TextStyle } from 'react-native';
 
 /** UI stack: Cairo on web (loaded in index.html), platform fonts on native */
 const webFontStack =
@@ -16,6 +16,15 @@ export const navigationUiFontFamily = Platform.select({
   web: webFontStack,
   default: 'System',
 }) as string;
+
+/** Split out so `fontVariant` is `FontVariant[]` under `TextStyle`, not widened `string[]`. */
+export const typographyTimer: TextStyle = {
+  fontSize: 18,
+  lineHeight: 24,
+  fontWeight: '300',
+  letterSpacing: 2,
+  fontVariant: ['tabular-nums'],
+};
 
 export const typography = {
   arabicHero: {
@@ -56,13 +65,7 @@ export const typography = {
     lineHeight: 28,
     fontWeight: '300' as const,
   },
-  timer: {
-    fontSize: 18,
-    lineHeight: 24,
-    fontWeight: '300' as const,
-    letterSpacing: 2,
-    fontVariant: ['tabular-nums'] as string[],
-  },
+  timer: typographyTimer,
   body: {
     fontSize: 15,
     lineHeight: 22,

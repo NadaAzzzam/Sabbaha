@@ -1,9 +1,5 @@
 import React from 'react';
-import {
-  TouchableOpacity,
-  View,
-  StyleSheet,
-} from 'react-native';
+import { Pressable, View, StyleSheet } from 'react-native';
 import { AppText } from '../ui/AppText';
 import { useTheme } from '../../hooks/useTheme';
 import { spacing, radius } from '../../theme/spacing';
@@ -14,17 +10,27 @@ import type { DhikrItem } from '../../constants/defaultDhikr';
 interface Props {
   item: DhikrItem;
   onPress: () => void;
+  /** Single surface avoids nested Touchables (Android often drops inner onPress). */
+  onLongPress?: () => void;
 }
 
-export const DhikrCard = ({ item, onPress }: Props) => {
+export const DhikrCard = ({ item, onPress, onLongPress }: Props) => {
   const colors = useTheme();
   const { t } = useTranslation();
 
   return (
-    <TouchableOpacity
+    <Pressable
       onPress={onPress}
-      activeOpacity={0.8}
-      style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}
+      onLongPress={onLongPress}
+      delayLongPress={600}
+      style={({ pressed }) => [
+        styles.card,
+        {
+          backgroundColor: colors.surface,
+          borderColor: colors.border,
+          opacity: pressed ? 0.85 : 1,
+        },
+      ]}
     >
       <View style={styles.main}>
         <AppText arabic style={[typography.arabicLarge, { color: colors.text }]}>
@@ -41,7 +47,7 @@ export const DhikrCard = ({ item, onPress }: Props) => {
             : `${item.defaultTarget}`}
         </AppText>
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 
