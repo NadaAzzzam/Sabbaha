@@ -11,17 +11,21 @@ export const useHaptics = () => {
   const enabled = useSettingsStore(s => s.hapticsEnabled);
   const intensity = useSettingsStore(s => s.hapticIntensity);
 
-  const fire = (type: HapticFeedbackTypes) =>
-    ReactNativeHapticFeedback.trigger(type, {
-      enableVibrateFallback: true,
-      // When the user turns haptics on in the app, still run on Android if system touch vibration is off.
-      ignoreAndroidSystemSettings: Platform.OS === 'android' && enabled,
-    });
+  const fire = (type: HapticFeedbackTypes) => {
+    try {
+      ReactNativeHapticFeedback.trigger(type, {
+        enableVibrateFallback: true,
+        ignoreAndroidSystemSettings: true,
+      });
+    } catch {
+      // If the native module is unavailable, fall back to a perceptible motor pulse.
+      if (Platform.OS === 'android') Vibration.vibrate(androidFallbackMs());
+    }
+  };
 
   const resolveType = (
     base: 'light' | 'medium' | 'heavy',
-  ): HapticFeedbackTypes | null => {
-    if (!enabled) return null;
+  ): HapticFeedbackTypes => {
     const map: Record<
       typeof base,
       Record<typeof intensity, HapticFeedbackTypes>
@@ -45,35 +49,50 @@ export const useHaptics = () => {
     return map[base][intensity];
   };
 
-  const androidTapMs = (): number => {
+  // Long enough to be felt on Android phones whose motors ignore <40ms pulses.
+  const androidFallbackMs = (): number => {
     const map: Record<typeof intensity, number> = {
-      light: 22,
-      medium: 38,
-      strong: 58,
+      light: 45,
+      medium: 75,
+      strong: 110,
     };
     return map[intensity];
   };
 
   const tap = () => {
     if (!enabled) return;
-    // Short motor pulse is reliable on all Android devices; the library often needs VIBRATE + system settings.
+    fire(resolveType('light'));
+    // Belt-and-braces on Android: many OEMs gate the haptic API by system settings,
+    // so also kick the motor directly with a perceptible pulse.
     if (Platform.OS === 'android') {
-      Vibration.vibrate(androidTapMs());
+      Vibration.vibrate(androidFallbackMs());
+    }
+  };
+
+  /**
+   * Fixed-target sessions: short “tick” each count so progress is felt.
+   * Must stay clearly lighter / shorter than `complete()` so the finale feels different.
+   */
+  const tapLimited = async () => {
+    if (!enabled) return;
+    fire(resolveType('light'));
+    if (Platform.OS === 'android') {
+      const pulse = Math.max(38, Math.round(androidFallbackMs() * 0.5));
+      Vibration.vibrate([0, pulse, 32, pulse]);
       return;
     }
-    const t = resolveType('light');
-    if (t) fire(t);
+    await sleep(42);
+    fire(resolveType('light'));
   };
 
   const milestone = async () => {
     if (!enabled) return;
+    const t = resolveType('medium');
+    fire(t);
     if (Platform.OS === 'android') {
-      Vibration.vibrate([0, 42, 88, 42]);
+      Vibration.vibrate([0, 60, 90, 60]);
       return;
     }
-    const t = resolveType('medium');
-    if (!t) return;
-    fire(t);
     await sleep(100);
     fire(t);
   };
@@ -83,20 +102,12 @@ export const useHaptics = () => {
     const t = resolveType('heavy');
 
     if (Platform.OS === 'android') {
-      if (t) {
-        fire(t);
-        await sleep(170);
-        fire(t);
-        await sleep(170);
-        fire(t);
-      }
-      // After the “counting” bursts, a longer two-pulse pattern = “target reached” (distinct from a single tap).
-      await sleep(280);
-      Vibration.vibrate([0, 130, 150, 130, 180, 420]);
+      fire(t);
+      // Long, heavy pattern = “done” — much longer pulses than tapLimited’s short ticks.
+      Vibration.vibrate([0, 160, 160, 160, 200, 160, 220, 480]);
       return;
     }
 
-    if (!t) return;
     fire(t);
     await sleep(200);
     fire(t);
@@ -106,5 +117,5 @@ export const useHaptics = () => {
     fire(HapticFeedbackTypes.notificationSuccess);
   };
 
-  return { tap, milestone, complete };
+  return { tap, tapLimited, milestone, complete };
 };

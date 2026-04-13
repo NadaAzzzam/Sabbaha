@@ -10,6 +10,7 @@ export interface SessionRecord {
   totalCount: number;
   durationMs: number;
   completedAt: number;
+  wasInterrupted?: boolean;
 }
 
 interface HistoryState {

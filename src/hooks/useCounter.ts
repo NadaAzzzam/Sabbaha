@@ -19,13 +19,17 @@ export const useCounter = (onComplete?: (finalCount: number) => void) => {
 
     if (isComplete) {
       complete();
-      // Completion: distinct vibration pattern + double tap sound
+      // Finale only: strong `complete()` haptics/sound — not `tapLimited` / `tap`
       haptics.complete();
       sound.playComplete();
       onComplete?.(next);
     } else if (isMilestone) {
       haptics.milestone();
       // Milestones get the tap sound too — distinct enough from completion
+      sound.playTap();
+    } else if (limit > 0) {
+      // Fixed target: motor pulse each tap (light tap alone is often inaudible on Android)
+      haptics.tapLimited();
       sound.playTap();
     } else {
       haptics.tap();
