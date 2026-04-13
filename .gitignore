@@ -37,6 +37,10 @@ local.properties
 
 # Local Gradle cache when project lives on a different drive than %USERPROFILE% (see scripts/android-gradle-home.js)
 .gradle-user-home/
+.gradle-user-home-temp/
+
+# Claude / local-only editor settings (do not push secrets or machine paths)
+.claude/settings.local.json
 
 # node.js
 #

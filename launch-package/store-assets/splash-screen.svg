@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1242 2688" width="1242" height="2688">
+  <!-- Splash screen - iPhone 14 Pro Max resolution -->
+  <defs>
+    <radialGradient id="splashBg" cx="50%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#264838"/>
+      <stop offset="100%" stop-color="#1B3A2D"/>
+    </radialGradient>
+    <linearGradient id="splashGold" x1="20%" y1="10%" x2="80%" y2="90%">
+      <stop offset="0%" stop-color="#E8D06A"/>
+      <stop offset="35%" stop-color="#C9A84C"/>
+      <stop offset="100%" stop-color="#A8873A"/>
+    </linearGradient>
+    <radialGradient id="splashGlow" cx="50%" cy="48%" r="30%">
+      <stop offset="0%" stop-color="rgba(201,168,76,0.25)"/>
+      <stop offset="100%" stop-color="rgba(201,168,76,0)"/>
+    </radialGradient>
+    <radialGradient id="splashHL" cx="38%" cy="35%" r="35%">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.3)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1242" height="2688" fill="url(#splashBg)"/>
+
+  <!-- Subtle decorative ring -->
+  <circle cx="621" cy="1200" r="400" fill="none" stroke="#2C4D3C" stroke-width="3" stroke-dasharray="14 22" opacity="0.3"/>
+
+  <!-- Glow -->
+  <circle cx="621" cy="1150" r="300" fill="url(#splashGlow)"/>
+
+  <!-- Central bead -->
+  <ellipse cx="621" cy="1120" rx="120" ry="140" fill="url(#splashGold)"/>
+  <ellipse cx="608" cy="1096" rx="74" ry="86" fill="url(#splashHL)"/>
+  <ellipse cx="621" cy="1120" rx="14" ry="20" fill="none" stroke="#A8873A" stroke-width="2.5" opacity="0.5"/>
+
+  <!-- String hints -->
+  <line x1="621" y1="965" x2="621" y2="980" stroke="#C9A84C" stroke-width="3.5" stroke-linecap="round" opacity="0.6"/>
+  <line x1="621" y1="1260" x2="621" y2="1275" stroke="#C9A84C" stroke-width="3.5" stroke-linecap="round" opacity="0.6"/>
+
+  <!-- App name -->
+  <text x="621" y="1440" text-anchor="middle" font-family="'Amiri', 'Traditional Arabic', serif" font-size="96" font-weight="700" fill="#C9A84C" letter-spacing="4">
+    حَبّة
+  </text>
+
+  <!-- Tagline -->
+  <text x="621" y="1520" text-anchor="middle" font-family="system-ui, sans-serif" font-size="32" fill="#A0B4AA" letter-spacing="3">
+    Feel every bead
+  </text>
+</svg>

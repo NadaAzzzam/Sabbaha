@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 500" width="1024" height="500">
+  <!-- Google Play Feature Graphic - 1024x500 -->
+  <defs>
+    <linearGradient id="fgBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1B3A2D"/>
+      <stop offset="100%" stop-color="#264838"/>
+    </linearGradient>
+    <linearGradient id="fgGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E8D06A"/>
+      <stop offset="35%" stop-color="#C9A84C"/>
+      <stop offset="100%" stop-color="#A8873A"/>
+    </linearGradient>
+    <radialGradient id="fgGlow" cx="25%" cy="50%" r="30%">
+      <stop offset="0%" stop-color="rgba(201,168,76,0.2)"/>
+      <stop offset="100%" stop-color="rgba(201,168,76,0)"/>
+    </radialGradient>
+    <radialGradient id="fgHL" cx="38%" cy="35%" r="35%">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.3)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1024" height="500" fill="url(#fgBg)"/>
+
+  <!-- Decorative dashed ring (left side) -->
+  <circle cx="260" cy="250" r="180" fill="none" stroke="#2C4D3C" stroke-width="2" stroke-dasharray="10 16" opacity="0.35"/>
+
+  <!-- Glow -->
+  <circle cx="260" cy="240" r="130" fill="url(#fgGlow)"/>
+
+  <!-- Bead -->
+  <ellipse cx="260" cy="235" rx="70" ry="80" fill="url(#fgGold)"/>
+  <ellipse cx="252" cy="220" rx="44" ry="50" fill="url(#fgHL)"/>
+  <ellipse cx="260" cy="235" rx="8" ry="12" fill="none" stroke="#A8873A" stroke-width="2" opacity="0.5"/>
+
+  <!-- String hints -->
+  <line x1="260" y1="145" x2="260" y2="155" stroke="#C9A84C" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+  <line x1="260" y1="315" x2="260" y2="325" stroke="#C9A84C" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+
+  <!-- Small beads on the ring -->
+  <circle cx="260" cy="70" r="6" fill="#C9A84C" opacity="0.4"/>
+  <circle cx="400" cy="120" r="5" fill="#C9A84C" opacity="0.3"/>
+  <circle cx="440" cy="250" r="5" fill="#C9A84C" opacity="0.25"/>
+  <circle cx="400" cy="380" r="5" fill="#C9A84C" opacity="0.3"/>
+  <circle cx="260" cy="430" r="6" fill="#C9A84C" opacity="0.4"/>
+  <circle cx="120" cy="380" r="5" fill="#C9A84C" opacity="0.3"/>
+  <circle cx="80" cy="250" r="5" fill="#C9A84C" opacity="0.25"/>
+  <circle cx="120" cy="120" r="5" fill="#C9A84C" opacity="0.3"/>
+
+  <!-- App name (right side) -->
+  <text x="660" y="220" text-anchor="middle" font-family="'Amiri', 'Traditional Arabic', serif" font-size="80" font-weight="700" fill="#C9A84C" letter-spacing="3">
+    حَبّة
+  </text>
+
+  <!-- English name -->
+  <text x="660" y="275" text-anchor="middle" font-family="system-ui, sans-serif" font-size="28" font-weight="300" fill="#A0B4AA" letter-spacing="6">
+    HABBAH
+  </text>
+
+  <!-- Tagline -->
+  <text x="660" y="330" text-anchor="middle" font-family="system-ui, sans-serif" font-size="20" fill="#6B8C7E" letter-spacing="2">
+    Your mindful dhikr companion
+  </text>
+
+  <!-- Feature pills -->
+  <rect x="530" y="370" width="90" height="32" rx="16" fill="rgba(201,168,76,0.15)"/>
+  <text x="575" y="391" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" font-weight="600" fill="#C9A84C">Streaks</text>
+
+  <rect x="630" y="370" width="110" height="32" rx="16" fill="rgba(201,168,76,0.15)"/>
+  <text x="685" y="391" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" font-weight="600" fill="#C9A84C">Statistics</text>
+
+  <rect x="750" y="370" width="90" height="32" rx="16" fill="rgba(201,168,76,0.15)"/>
+  <text x="795" y="391" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" font-weight="600" fill="#C9A84C">Haptics</text>
+</svg>

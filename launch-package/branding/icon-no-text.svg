@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!-- Minimal icon without text - for very small sizes (favicon, notification) -->
+  <defs>
+    <radialGradient id="minBg" cx="50%" cy="42%" r="58%">
+      <stop offset="0%" stop-color="#264838"/>
+      <stop offset="100%" stop-color="#1B3A2D"/>
+    </radialGradient>
+    <linearGradient id="minGold" x1="20%" y1="10%" x2="80%" y2="90%">
+      <stop offset="0%" stop-color="#E8D06A"/>
+      <stop offset="35%" stop-color="#C9A84C"/>
+      <stop offset="100%" stop-color="#A8873A"/>
+    </linearGradient>
+    <radialGradient id="minGlow" cx="50%" cy="48%" r="40%">
+      <stop offset="0%" stop-color="rgba(201,168,76,0.3)"/>
+      <stop offset="100%" stop-color="rgba(201,168,76,0)"/>
+    </radialGradient>
+    <radialGradient id="minHL" cx="40%" cy="35%" r="35%">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.35)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+    </radialGradient>
+    <filter id="minShadow">
+      <feDropShadow dx="0" dy="6" stdDeviation="12" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <rect x="0" y="0" width="1024" height="1024" rx="224" ry="224" fill="url(#minBg)"/>
+  <circle cx="512" cy="512" r="340" fill="none" stroke="#2C4D3C" stroke-width="3" stroke-dasharray="12 18" opacity="0.35"/>
+  <circle cx="512" cy="490" r="220" fill="url(#minGlow)"/>
+  <ellipse cx="512" cy="490" rx="155" ry="178" fill="url(#minGold)" filter="url(#minShadow)"/>
+  <ellipse cx="494" cy="460" rx="96" ry="110" fill="url(#minHL)"/>
+  <ellipse cx="512" cy="490" rx="16" ry="24" fill="none" stroke="#A8873A" stroke-width="2.5" opacity="0.5"/>
+  <line x1="512" y1="295" x2="512" y2="312" stroke="#C9A84C" stroke-width="4" stroke-linecap="round" opacity="0.6"/>
+  <line x1="512" y1="668" x2="512" y2="685" stroke="#C9A84C" stroke-width="4" stroke-linecap="round" opacity="0.6"/>
+  <circle cx="512" cy="730" r="20" fill="#C9A84C" opacity="0.45"/>
+  <circle cx="466" cy="760" r="14" fill="#C9A84C" opacity="0.25"/>
+  <circle cx="558" cy="760" r="14" fill="#C9A84C" opacity="0.25"/>
+</svg>

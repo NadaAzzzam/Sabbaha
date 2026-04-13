@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 844" width="390" height="844">
+  <!-- iPhone 14 frame - Summary Screen -->
+  <defs>
+    <clipPath id="sumClip">
+      <rect x="0" y="0" width="390" height="844" rx="44"/>
+    </clipPath>
+    <radialGradient id="sumGlow" cx="50%" cy="40%" r="50%">
+      <stop offset="0%" stop-color="rgba(201,168,76,0.15)"/>
+      <stop offset="100%" stop-color="rgba(201,168,76,0)"/>
+    </radialGradient>
+  </defs>
+
+  <g clip-path="url(#sumClip)">
+    <rect width="390" height="844" fill="#1B3A2D"/>
+
+    <!-- Status bar -->
+    <text x="35" y="36" font-family="SF Pro, system-ui" font-size="15" font-weight="600" fill="#fff">9:41</text>
+    <rect x="122" y="0" width="146" height="34" rx="17" fill="#000"/>
+
+    <!-- Glow background -->
+    <circle cx="195" cy="300" r="200" fill="url(#sumGlow)"/>
+
+    <!-- Checkmark circle -->
+    <circle cx="195" cy="230" r="50" fill="none" stroke="#C9A84C" stroke-width="3"/>
+    <polyline points="172,230 188,248 218,215" fill="none" stroke="#C9A84C" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <!-- Blessing text -->
+    <text x="195" y="325" text-anchor="middle" font-family="'Amiri', serif" font-size="24" font-weight="600" fill="#C9A84C">
+      بارك الله في وقتك
+    </text>
+
+    <!-- Stats card -->
+    <rect x="40" y="370" width="310" height="140" rx="20" fill="#243F32" stroke="#2C4D3C" stroke-width="1"/>
+
+    <!-- Count stat -->
+    <text x="130" y="415" text-anchor="middle" font-family="SF Pro, system-ui" font-size="42" font-weight="800" fill="#C9A84C">٣٣</text>
+    <text x="130" y="445" text-anchor="middle" font-family="SF Pro, system-ui" font-size="14" fill="#6B8C7E">تسبيحة</text>
+
+    <!-- Divider -->
+    <line x1="195" y1="395" x2="195" y2="485" stroke="#2C4D3C" stroke-width="1"/>
+
+    <!-- Duration stat -->
+    <text x="260" y="415" text-anchor="middle" font-family="SF Pro, system-ui" font-size="42" font-weight="800" fill="#fff">٣</text>
+    <text x="260" y="445" text-anchor="middle" font-family="SF Pro, system-ui" font-size="14" fill="#6B8C7E">دقيقة و ١٢ ثانية</text>
+
+    <!-- Dhikr name shown -->
+    <text x="195" y="490" text-anchor="middle" font-family="'Amiri', serif" font-size="16" fill="#A0B4AA">سُبْحَانَ اللَّهِ</text>
+
+    <!-- Action buttons -->
+    <!-- New Dhikr button -->
+    <rect x="40" y="560" width="310" height="56" rx="28" fill="#C9A84C"/>
+    <text x="195" y="595" text-anchor="middle" font-family="'Amiri', serif" font-size="18" font-weight="700" fill="#1B3A2D">
+      تسبيح جديد
+    </text>
+
+    <!-- Same Dhikr button -->
+    <rect x="40" y="630" width="310" height="56" rx="28" fill="transparent" stroke="#C9A84C" stroke-width="1.5"/>
+    <text x="195" y="665" text-anchor="middle" font-family="'Amiri', serif" font-size="18" font-weight="600" fill="#C9A84C">
+      نفس الذكر
+    </text>
+
+    <!-- Home indicator -->
+    <rect x="142" y="830" width="106" height="5" rx="2.5" fill="#6B8C7E" opacity="0.3"/>
+  </g>
+
+  <rect x="0" y="0" width="390" height="844" rx="44" fill="none" stroke="#333" stroke-width="2"/>
+</svg>

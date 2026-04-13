@@ -12,7 +12,7 @@ import {
   TouchableWithoutFeedback,
   TouchableOpacity,
   Alert,
-  Dimensions,
+  useWindowDimensions,
 } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -41,10 +41,8 @@ import { useDhikrStore } from '../stores/useDhikrStore';
 import { spacing } from '../theme/spacing';
 import { typography, typographyTimer } from '../theme/typography';
 import { formatTimer, formatCount } from '../utils/formatters';
+import { ms, isTablet } from '../utils/responsive';
 import type { RootStackParamList } from '../navigation/types';
-
-const { width: SCREEN_W } = Dimensions.get('window');
-const RING_SIZE = SCREEN_W * 0.75;
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 type Route = RouteProp<RootStackParamList, 'Session'>;
@@ -105,13 +103,15 @@ const CountDisplay = memo(function CountDisplay({
 }) {
   const countStr = useMemo(() => formatCount(count, language), [count, language]);
   const targetStr = useMemo(() => formatCount(targetCount, language), [targetCount, language]);
+  const counterFontSize = ms(72, 0.4);
+  const subFontSize = ms(22, 0.3);
   return (
     <>
-      <AppText style={[typography.counterHero, { color: accentColor, marginTop: spacing.sm }]}>
+      <AppText style={[typography.counterHero, { color: accentColor, marginTop: spacing.sm, fontSize: counterFontSize, lineHeight: counterFontSize * 1.1 }]}>
         {countStr}
       </AppText>
       {targetCount > 0 && (
-        <AppText style={[typography.counterSub, { color: mutedColor }]}>
+        <AppText style={[typography.counterSub, { color: mutedColor, fontSize: subFontSize }]}>
           / {targetStr}
         </AppText>
       )}
@@ -126,12 +126,30 @@ export const SessionScreen = () => {
   const route = useRoute<Route>();
   const { dhikrId, targetCount } = route.params;
 
+  // Responsive ring size
+  const { width: screenW, height: screenH } = useWindowDimensions();
+  const RING_SIZE = Math.min(
+    screenW * (isTablet ? 0.5 : 0.75),
+    screenH * 0.4,
+    400,
+  );
+
   // Granular selectors — each only re-renders on its own slice
   const customDhikr = useDhikrStore(s => s.customDhikr);
   const item = useMemo(
     () => [...DEFAULT_DHIKR, ...customDhikr].find(d => d.id === dhikrId),
     [customDhikr, dhikrId],
   );
+
+  // Auto-size dhikr text: shrink for long strings so they fit inside the ring
+  const dhikrText = item?.arabicText ?? dhikrId;
+  const dhikrTextFontSize = useMemo(() => {
+    const len = dhikrText.length;
+    if (len <= 12) return ms(20, 0.3);
+    if (len <= 20) return ms(18, 0.3);
+    if (len <= 30) return ms(16, 0.3);
+    return ms(14, 0.3);
+  }, [dhikrText]);
 
   const initSession = useSessionStore(s => s.initSession);
   const currentCount = useSessionStore(s => s.currentCount);
@@ -309,9 +327,17 @@ export const SessionScreen = () => {
 
               <AppText
                 arabic
+                numberOfLines={2}
                 style={[
                   typography.arabicMedium,
-                  { color: colors.textSecondary, textAlign: 'center' },
+                  {
+                    color: colors.textSecondary,
+                    textAlign: 'center',
+                    fontSize: dhikrTextFontSize,
+                    lineHeight: dhikrTextFontSize * 1.6,
+                    paddingHorizontal: spacing.md,
+                    maxWidth: RING_SIZE + spacing.xl,
+                  },
                 ]}
               >
                 {item?.arabicText ?? dhikrId}
@@ -338,13 +364,13 @@ export const SessionScreen = () => {
           </View>
         </TouchableWithoutFeedback>
 
-        <View style={styles.bottomRow} pointerEvents="box-none">
+        <View style={[styles.bottomRow, isTablet && styles.bottomRowTablet]} pointerEvents="box-none">
           <TouchableOpacity
             onPress={handlePausePress}
             style={[styles.pauseBtn, { backgroundColor: colors.surface }]}
             hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
           >
-            <AppText style={{ color: colors.textSecondary, fontSize: 22 }}>
+            <AppText style={{ color: colors.textSecondary, fontSize: ms(22, 0.3) }}>
               {isPaused ? '▶' : '⏸'}
             </AppText>
           </TouchableOpacity>
@@ -406,5 +432,11 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
     borderRadius: 24,
     borderWidth: 1,
+  },
+  bottomRowTablet: {
+    maxWidth: 500,
+    alignSelf: 'center',
+    left: 0,
+    right: 0,
   },
 });

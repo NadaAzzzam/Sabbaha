@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920" width="1080" height="1920">
+  <!-- Android Phone Screenshot - History Screen -->
+  <defs>
+    <clipPath id="histClip2">
+      <rect x="0" y="0" width="1080" height="1920" rx="40"/>
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#histClip2)">
+    <rect width="1080" height="1920" fill="#1B3A2D"/>
+
+    <!-- Status bar -->
+    <rect x="0" y="0" width="1080" height="80" fill="rgba(0,0,0,0.15)"/>
+    <text x="40" y="55" font-family="Roboto, system-ui" font-size="32" font-weight="500" fill="#fff">12:30</text>
+
+    <!-- Title -->
+    <text x="1000" y="190" text-anchor="end" font-family="'Amiri', serif" font-size="72" font-weight="700" fill="#fff">السجل</text>
+
+    <!-- Summary pills -->
+    <rect x="56" y="240" width="468" height="140" rx="40" fill="#243F32" stroke="#2C4D3C" stroke-width="2"/>
+    <text x="290" y="310" text-anchor="middle" font-family="Roboto, system-ui" font-size="52" font-weight="700" fill="#C9A84C">٤٢</text>
+    <text x="290" y="355" text-anchor="middle" font-family="Roboto, system-ui" font-size="28" fill="#6B8C7E">جلسة</text>
+
+    <rect x="556" y="240" width="468" height="140" rx="40" fill="#243F32" stroke="#2C4D3C" stroke-width="2"/>
+    <text x="790" y="310" text-anchor="middle" font-family="Roboto, system-ui" font-size="52" font-weight="700" fill="#C9A84C">١٢٠</text>
+    <text x="790" y="355" text-anchor="middle" font-family="Roboto, system-ui" font-size="28" fill="#6B8C7E">دقيقة</text>
+
+    <!-- Weekly chart card -->
+    <rect x="56" y="410" width="968" height="470" rx="40" fill="#243F32" stroke="#2C4D3C" stroke-width="2"/>
+    <text x="968" y="468" text-anchor="end" font-family="Roboto, system-ui" font-size="32" font-weight="600" fill="#A0B4AA">هذا الأسبوع</text>
+
+    <!-- Chart bars -->
+    <rect x="120" y="700" width="70" height="120" rx="10" fill="#C9A84C" opacity="0.4"/>
+    <text x="155" y="840" text-anchor="middle" font-family="Roboto, system-ui" font-size="24" fill="#6B8C7E">سبت</text>
+
+    <rect x="230" y="640" width="70" height="180" rx="10" fill="#C9A84C" opacity="0.5"/>
+    <text x="265" y="840" text-anchor="middle" font-family="Roboto, system-ui" font-size="24" fill="#6B8C7E">أحد</text>
+
+    <rect x="340" y="600" width="70" height="220" rx="10" fill="#C9A84C" opacity="0.6"/>
+    <text x="375" y="840" text-anchor="middle" font-family="Roboto, system-ui" font-size="24" fill="#6B8C7E">إثنين</text>
+
+    <rect x="450" y="680" width="70" height="140" rx="10" fill="#C9A84C" opacity="0.45"/>
+    <text x="485" y="840" text-anchor="middle" font-family="Roboto, system-ui" font-size="24" fill="#6B8C7E">ثلاثاء</text>
+
+    <rect x="560" y="560" width="70" height="260" rx="10" fill="#C9A84C" opacity="0.7"/>
+    <text x="595" y="840" text-anchor="middle" font-family="Roboto, system-ui" font-size="24" fill="#6B8C7E">أربعاء</text>
+
+    <rect x="670" y="620" width="70" height="200" rx="10" fill="#C9A84C" opacity="0.55"/>
+    <text x="705" y="840" text-anchor="middle" font-family="Roboto, system-ui" font-size="24" fill="#6B8C7E">خميس</text>
+
+    <rect x="780" y="540" width="70" height="280" rx="10" fill="#C9A84C"/>
+    <text x="815" y="840" text-anchor="middle" font-family="Roboto, system-ui" font-size="24" font-weight="600" fill="#C9A84C">جمعة</text>
+
+    <!-- Stat cards -->
+    <rect x="56" y="920" width="968" height="210" rx="40" fill="#243F32" stroke="#2C4D3C" stroke-width="2"/>
+    <text x="968" y="985" text-anchor="end" font-family="'Amiri', serif" font-size="48" font-weight="600" fill="#fff">سُبْحَانَ اللَّهِ</text>
+    <text x="968" y="1040" text-anchor="end" font-family="Roboto, system-ui" font-size="28" fill="#6B8C7E">١٥ جلسة · ٤٥ دقيقة</text>
+    <text x="120" y="1010" font-family="Roboto, system-ui" font-size="64" font-weight="800" fill="#C9A84C">٤٩٥</text>
+    <text x="120" y="1060" font-family="Roboto, system-ui" font-size="28" fill="#6B8C7E">الإجمالي</text>
+
+    <rect x="56" y="1150" width="968" height="210" rx="40" fill="#243F32" stroke="#2C4D3C" stroke-width="2"/>
+    <text x="968" y="1215" text-anchor="end" font-family="'Amiri', serif" font-size="48" font-weight="600" fill="#fff">الْحَمْدُ لِلَّهِ</text>
+    <text x="968" y="1270" text-anchor="end" font-family="Roboto, system-ui" font-size="28" fill="#6B8C7E">١٢ جلسة · ٣٢ دقيقة</text>
+    <text x="120" y="1240" font-family="Roboto, system-ui" font-size="64" font-weight="800" fill="#C9A84C">٣٩٦</text>
+    <text x="120" y="1290" font-family="Roboto, system-ui" font-size="28" fill="#6B8C7E">الإجمالي</text>
+
+    <rect x="56" y="1380" width="968" height="210" rx="40" fill="#243F32" stroke="#2C4D3C" stroke-width="2"/>
+    <text x="968" y="1445" text-anchor="end" font-family="'Amiri', serif" font-size="48" font-weight="600" fill="#fff">اللَّهُ أَكْبَرُ</text>
+    <text x="968" y="1500" text-anchor="end" font-family="Roboto, system-ui" font-size="28" fill="#6B8C7E">١٠ جلسة · ٢٨ دقيقة</text>
+    <text x="120" y="1470" font-family="Roboto, system-ui" font-size="64" font-weight="800" fill="#C9A84C">٣٣٠</text>
+    <text x="120" y="1520" font-family="Roboto, system-ui" font-size="28" fill="#6B8C7E">الإجمالي</text>
+
+    <!-- Bottom Tab Bar -->
+    <rect x="0" y="1740" width="1080" height="180" fill="#243F32"/>
+    <line x1="0" y1="1740" x2="1080" y2="1740" stroke="#2C4D3C" stroke-width="2"/>
+    <text x="180" y="1810" text-anchor="middle" font-size="46" opacity="0.5">📿</text>
+    <text x="180" y="1858" text-anchor="middle" font-family="Roboto, system-ui" font-size="24" fill="#6B8C7E">حَبّة</text>
+    <text x="540" y="1810" text-anchor="middle" font-size="46">📊</text>
+    <text x="540" y="1858" text-anchor="middle" font-family="Roboto, system-ui" font-size="24" font-weight="600" fill="#C9A84C">السجل</text>
+    <circle cx="540" cy="1884" r="6" fill="#C9A84C"/>
+    <text x="900" y="1810" text-anchor="middle" font-size="46" opacity="0.5">⚙️</text>
+    <text x="900" y="1858" text-anchor="middle" font-family="Roboto, system-ui" font-size="24" fill="#6B8C7E">الإعدادات</text>
+  </g>
+
+  <rect x="0" y="0" width="1080" height="1920" rx="40" fill="none" stroke="#222" stroke-width="2"/>
+</svg>

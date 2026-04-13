@@ -17,6 +17,7 @@ import { spacing, radius } from '../theme/spacing';
 import { typography } from '../theme/typography';
 import { DEFAULT_DHIKR } from '../constants/defaultDhikr';
 import { useDhikrStore } from '../stores/useDhikrStore';
+import { isTablet, contentMaxWidth, ms } from '../utils/responsive';
 import type { RootStackParamList } from '../navigation/types';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
@@ -69,7 +70,16 @@ export const SessionSetupScreen = () => {
         <View style={styles.dhikrArea}>
           <AppText
             arabic
-            style={[typography.arabicHero, { color: colors.text, textAlign: 'center' }]}
+            numberOfLines={2}
+            style={[
+              typography.arabicHero,
+              {
+                color: colors.text,
+                textAlign: 'center',
+                fontSize: item.arabicText.length > 25 ? ms(28, 0.3) : item.arabicText.length > 15 ? ms(34, 0.3) : ms(42, 0.4),
+                lineHeight: item.arabicText.length > 25 ? ms(48, 0.3) : ms(64, 0.4),
+              },
+            ]}
           >
             {item.arabicText}
           </AppText>
@@ -166,6 +176,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingHorizontal: spacing.lg,
     paddingBottom: spacing.xxxl,
+    ...(isTablet ? { maxWidth: contentMaxWidth, alignSelf: 'center' as const, width: '100%' as any } : {}),
   },
   backBtn: {
     marginTop: spacing.sm,

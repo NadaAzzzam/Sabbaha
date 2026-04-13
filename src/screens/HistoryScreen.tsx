@@ -20,15 +20,18 @@ import { typography } from '../theme/typography';
 import { calcStats, weeklyData } from '../utils/statsCalculator';
 import { formatDuration, formatCount } from '../utils/formatters';
 import { hijriParts } from '../utils/hijri';
+import { isTablet, contentMaxWidth } from '../utils/responsive';
 import type { RootStackParamList } from '../navigation/types';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
 const { width: SCREEN_W } = Dimensions.get('window');
+// On tablets, constrain content width so charts don't stretch too wide
+const effectiveW = isTablet ? Math.min(SCREEN_W, contentMaxWidth) : SCREEN_W;
 // Chart card: marginH lg (24) + padding md (16) on each side  →  inner width
 const CHART_CARD_MARGIN = spacing.lg;
 const CHART_CARD_PADDING = spacing.md;
-const CHART_W = SCREEN_W - (CHART_CARD_MARGIN + CHART_CARD_PADDING) * 2;
+const CHART_W = effectiveW - (CHART_CARD_MARGIN + CHART_CARD_PADDING) * 2;
 const CHART_H = 120;
 const CHART_TOP_PAD = 22;   // reserve space for value labels above the tallest bar
 const CHART_BOTTOM_PAD = 6;  // baseline breathing room (day labels now rendered as RN Text)
@@ -495,5 +498,6 @@ const styles = StyleSheet.create({
 
   listContent: {
     paddingBottom: spacing.xxxl,
+    ...(isTablet ? { maxWidth: contentMaxWidth, alignSelf: 'center' as const, width: '100%' as any } : {}),
   },
 });

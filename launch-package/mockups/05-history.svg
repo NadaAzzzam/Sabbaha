@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 844" width="390" height="844">
+  <!-- iPhone 14 frame - History Screen -->
+  <defs>
+    <clipPath id="histClip">
+      <rect x="0" y="0" width="390" height="844" rx="44"/>
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#histClip)">
+    <rect width="390" height="844" fill="#1B3A2D"/>
+
+    <!-- Status bar -->
+    <text x="35" y="36" font-family="SF Pro, system-ui" font-size="15" font-weight="600" fill="#fff">9:41</text>
+    <rect x="122" y="0" width="146" height="34" rx="17" fill="#000"/>
+
+    <!-- Title -->
+    <text x="350" y="85" text-anchor="end" font-family="'Amiri', serif" font-size="30" font-weight="700" fill="#fff">السجل</text>
+
+    <!-- Summary pills row -->
+    <rect x="20" y="108" width="168" height="60" rx="16" fill="#243F32" stroke="#2C4D3C" stroke-width="1"/>
+    <text x="104" y="133" text-anchor="middle" font-family="SF Pro, system-ui" font-size="22" font-weight="700" fill="#C9A84C">٤٢</text>
+    <text x="104" y="153" text-anchor="middle" font-family="SF Pro, system-ui" font-size="11" fill="#6B8C7E">جلسة</text>
+
+    <rect x="202" y="108" width="168" height="60" rx="16" fill="#243F32" stroke="#2C4D3C" stroke-width="1"/>
+    <text x="286" y="133" text-anchor="middle" font-family="SF Pro, system-ui" font-size="22" font-weight="700" fill="#C9A84C">١٢٠</text>
+    <text x="286" y="153" text-anchor="middle" font-family="SF Pro, system-ui" font-size="11" fill="#6B8C7E">دقيقة</text>
+
+    <!-- Weekly bar chart -->
+    <rect x="20" y="185" width="350" height="200" rx="16" fill="#243F32" stroke="#2C4D3C" stroke-width="1"/>
+    <text x="350" y="212" text-anchor="end" font-family="SF Pro, system-ui" font-size="13" font-weight="600" fill="#A0B4AA">هذا الأسبوع</text>
+
+    <!-- Chart bars -->
+    <rect x="48" y="310" width="28" height="50" rx="4" fill="#C9A84C" opacity="0.4"/>
+    <text x="62" y="372" text-anchor="middle" font-family="SF Pro, system-ui" font-size="10" fill="#6B8C7E">سبت</text>
+    <rect x="92" y="280" width="28" height="80" rx="4" fill="#C9A84C" opacity="0.5"/>
+    <text x="106" y="372" text-anchor="middle" font-family="SF Pro, system-ui" font-size="10" fill="#6B8C7E">أحد</text>
+    <rect x="136" y="260" width="28" height="100" rx="4" fill="#C9A84C" opacity="0.6"/>
+    <text x="150" y="372" text-anchor="middle" font-family="SF Pro, system-ui" font-size="10" fill="#6B8C7E">إثنين</text>
+    <rect x="180" y="300" width="28" height="60" rx="4" fill="#C9A84C" opacity="0.45"/>
+    <text x="194" y="372" text-anchor="middle" font-family="SF Pro, system-ui" font-size="10" fill="#6B8C7E">ثلاثاء</text>
+    <rect x="224" y="240" width="28" height="120" rx="4" fill="#C9A84C" opacity="0.7"/>
+    <text x="238" y="372" text-anchor="middle" font-family="SF Pro, system-ui" font-size="10" fill="#6B8C7E">أربعاء</text>
+    <rect x="268" y="270" width="28" height="90" rx="4" fill="#C9A84C" opacity="0.55"/>
+    <text x="282" y="372" text-anchor="middle" font-family="SF Pro, system-ui" font-size="10" fill="#6B8C7E">خميس</text>
+    <rect x="312" y="235" width="28" height="125" rx="4" fill="#C9A84C"/>
+    <text x="326" y="372" text-anchor="middle" font-family="SF Pro, system-ui" font-size="10" font-weight="600" fill="#C9A84C">جمعة</text>
+
+    <!-- Dhikr stat cards -->
+    <!-- Card 1 -->
+    <rect x="20" y="400" width="350" height="90" rx="16" fill="#243F32" stroke="#2C4D3C" stroke-width="1"/>
+    <text x="350" y="432" text-anchor="end" font-family="'Amiri', serif" font-size="20" font-weight="600" fill="#fff">سُبْحَانَ اللَّهِ</text>
+    <text x="350" y="462" text-anchor="end" font-family="SF Pro, system-ui" font-size="12" fill="#6B8C7E">١٥ جلسة · ٤٥ دقيقة</text>
+    <text x="40" y="445" font-family="SF Pro, system-ui" font-size="28" font-weight="800" fill="#C9A84C">٤٩٥</text>
+    <text x="40" y="468" font-family="SF Pro, system-ui" font-size="11" fill="#6B8C7E">الإجمالي</text>
+
+    <!-- Card 2 -->
+    <rect x="20" y="502" width="350" height="90" rx="16" fill="#243F32" stroke="#2C4D3C" stroke-width="1"/>
+    <text x="350" y="534" text-anchor="end" font-family="'Amiri', serif" font-size="20" font-weight="600" fill="#fff">الْحَمْدُ لِلَّهِ</text>
+    <text x="350" y="564" text-anchor="end" font-family="SF Pro, system-ui" font-size="12" fill="#6B8C7E">١٢ جلسة · ٣٢ دقيقة</text>
+    <text x="40" y="547" font-family="SF Pro, system-ui" font-size="28" font-weight="800" fill="#C9A84C">٣٩٦</text>
+    <text x="40" y="570" font-family="SF Pro, system-ui" font-size="11" fill="#6B8C7E">الإجمالي</text>
+
+    <!-- Card 3 -->
+    <rect x="20" y="604" width="350" height="90" rx="16" fill="#243F32" stroke="#2C4D3C" stroke-width="1"/>
+    <text x="350" y="636" text-anchor="end" font-family="'Amiri', serif" font-size="20" font-weight="600" fill="#fff">اللَّهُ أَكْبَرُ</text>
+    <text x="350" y="666" text-anchor="end" font-family="SF Pro, system-ui" font-size="12" fill="#6B8C7E">١٠ جلسة · ٢٨ دقيقة</text>
+    <text x="40" y="649" font-family="SF Pro, system-ui" font-size="28" font-weight="800" fill="#C9A84C">٣٣٠</text>
+    <text x="40" y="672" font-family="SF Pro, system-ui" font-size="11" fill="#6B8C7E">الإجمالي</text>
+
+    <!-- Bottom Tab Bar -->
+    <rect x="0" y="760" width="390" height="84" fill="#243F32"/>
+    <line x1="0" y1="760" x2="390" y2="760" stroke="#2C4D3C" stroke-width="1"/>
+    <circle cx="78" cy="790" r="4" fill="#6B8C7E"/>
+    <text x="78" y="814" text-anchor="middle" font-family="SF Pro, system-ui" font-size="10" fill="#6B8C7E">الرئيسية</text>
+    <rect x="183" y="782" width="24" height="18" rx="3" fill="none" stroke="#C9A84C" stroke-width="1.5"/>
+    <text x="195" y="814" text-anchor="middle" font-family="SF Pro, system-ui" font-size="10" font-weight="600" fill="#C9A84C">السجل</text>
+    <circle cx="312" cy="790" r="9" fill="none" stroke="#6B8C7E" stroke-width="1.5"/>
+    <text x="312" y="814" text-anchor="middle" font-family="SF Pro, system-ui" font-size="10" fill="#6B8C7E">الإعدادات</text>
+
+    <rect x="142" y="830" width="106" height="5" rx="2.5" fill="#6B8C7E" opacity="0.3"/>
+  </g>
+
+  <rect x="0" y="0" width="390" height="844" rx="44" fill="none" stroke="#333" stroke-width="2"/>
+</svg>

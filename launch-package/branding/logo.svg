@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Gradient for the background circle -->
+    <radialGradient id="bgGrad" cx="50%" cy="45%" r="55%">
+      <stop offset="0%" stop-color="#243F32"/>
+      <stop offset="100%" stop-color="#1B3A2D"/>
+    </radialGradient>
+    <!-- Gold gradient for the bead/grain -->
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E0C564"/>
+      <stop offset="40%" stop-color="#C9A84C"/>
+      <stop offset="100%" stop-color="#A8873A"/>
+    </linearGradient>
+    <!-- Subtle glow behind the bead -->
+    <radialGradient id="glowGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="rgba(201,168,76,0.35)"/>
+      <stop offset="100%" stop-color="rgba(201,168,76,0)"/>
+    </radialGradient>
+    <!-- Shadow filter -->
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000" flood-opacity="0.25"/>
+    </filter>
+    <!-- Inner bead highlight -->
+    <radialGradient id="beadHighlight" cx="38%" cy="35%" r="40%">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.3)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="248" fill="url(#bgGrad)"/>
+
+  <!-- Subtle outer ring (tasbih string suggestion) -->
+  <circle cx="256" cy="256" r="200" fill="none" stroke="#2C4D3C" stroke-width="2" stroke-dasharray="8 12" opacity="0.5"/>
+
+  <!-- Glow behind central bead -->
+  <circle cx="256" cy="240" r="110" fill="url(#glowGrad)"/>
+
+  <!-- Central bead (the "Habbah" - grain/bead) -->
+  <!-- Stylized as an elegant oval bead, the core metaphor -->
+  <ellipse cx="256" cy="236" rx="68" ry="78" fill="url(#goldGrad)" filter="url(#shadow)"/>
+  <!-- Bead highlight -->
+  <ellipse cx="246" cy="222" rx="42" ry="48" fill="url(#beadHighlight)"/>
+  <!-- Bead inner line detail (string hole suggestion) -->
+  <ellipse cx="256" cy="236" rx="8" ry="12" fill="none" stroke="#A8873A" stroke-width="1.5" opacity="0.6"/>
+
+  <!-- Thin string going through the bead -->
+  <line x1="256" y1="148" x2="256" y2="158" stroke="#C9A84C" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+  <line x1="256" y1="314" x2="256" y2="324" stroke="#C9A84C" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+
+  <!-- Arabic text: حَبّة -->
+  <text x="256" y="380" text-anchor="middle" font-family="'Amiri', 'Traditional Arabic', 'Noto Naskh Arabic', serif" font-size="56" font-weight="700" fill="#C9A84C" letter-spacing="2">
+    حَبّة
+  </text>
+
+  <!-- Small decorative dots (small beads) flanking the text -->
+  <circle cx="168" cy="372" r="4" fill="#C9A84C" opacity="0.4"/>
+  <circle cx="344" cy="372" r="4" fill="#C9A84C" opacity="0.4"/>
+  <circle cx="152" cy="372" r="3" fill="#C9A84C" opacity="0.25"/>
+  <circle cx="360" cy="372" r="3" fill="#C9A84C" opacity="0.25"/>
+</svg>

@@ -10,6 +10,7 @@ import {
   Platform,
   Alert,
   useWindowDimensions,
+  ScrollView,
 } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -35,7 +36,9 @@ import { useHistoryStore } from '../stores/useHistoryStore';
 import { useSettingsStore } from '../stores/useSettingsStore';
 import { calcStreak, todayTotals } from '../utils/statsCalculator';
 import { formatCount, formatDayName, formatLongDate } from '../utils/formatters';
+import { isTablet, contentMaxWidth, ms } from '../utils/responsive';
 import type { RootStackParamList } from '../navigation/types';
+import { HalalBannerAd } from '../components/ads/HalalBannerAd';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
@@ -128,8 +131,12 @@ export const HomeScreen = () => {
   const streakLabel = streak === 1 ? t('home.streakLabelOne') : t('home.streakLabel');
   const flame = streak > 0 ? '🔥' : '✨';
 
-  // Responsive horizontal padding — scales slightly with width
-  const hPad = width < 360 ? spacing.md : spacing.lg;
+  // Responsive horizontal padding — scales for phones and tablets
+  const hPad = isTablet
+    ? Math.max(spacing.xl, (width - contentMaxWidth) / 2)
+    : width < 360
+    ? spacing.md
+    : spacing.lg;
 
   return (
     <ScreenWrapper edges={['top', 'left', 'right']}>
@@ -240,6 +247,8 @@ export const HomeScreen = () => {
           </Pressable>
         }
       />
+
+      <HalalBannerAd />
 
       {/* Add Custom Dhikr Modal */}
       <Modal

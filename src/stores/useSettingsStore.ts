@@ -16,6 +16,7 @@ interface SettingsState {
   soundEnabled: boolean;
   soundVolume: SoundVolume;
   reminderInterval: ReminderInterval;
+  hasSeenOnboarding: boolean;
   setLanguage: (lang: Language) => void;
   setTheme: (theme: Theme) => void;
   setHapticsEnabled: (v: boolean) => void;
@@ -23,6 +24,7 @@ interface SettingsState {
   setSoundEnabled: (v: boolean) => void;
   setSoundVolume: (v: SoundVolume) => void;
   setReminderInterval: (v: ReminderInterval) => void;
+  setHasSeenOnboarding: () => void;
 }
 
 export const useSettingsStore = create<SettingsState>()(
@@ -35,6 +37,7 @@ export const useSettingsStore = create<SettingsState>()(
       soundEnabled: true,
       soundVolume: 'medium',
       reminderInterval: 'off',
+      hasSeenOnboarding: false,
       setLanguage: lang => set({ language: lang }),
       setTheme: theme => set({ theme }),
       setHapticsEnabled: v => set({ hapticsEnabled: v }),
@@ -42,6 +45,7 @@ export const useSettingsStore = create<SettingsState>()(
       setSoundEnabled: v => set({ soundEnabled: v }),
       setSoundVolume: v => set({ soundVolume: v }),
       setReminderInterval: v => set({ reminderInterval: v }),
+      setHasSeenOnboarding: () => set({ hasSeenOnboarding: true }),
     }),
     {
       name: 'habbah-settings',

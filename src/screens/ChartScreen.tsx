@@ -42,11 +42,14 @@ import { typography } from '../theme/typography';
 import { hijriMonthName, hijriParts } from '../utils/hijri';
 import { formatLongDate } from '../utils/formatters';
 
+import { isTablet, contentMaxWidth } from '../utils/responsive';
+
 const { width: SCREEN_W } = Dimensions.get('window');
+const effectiveW = isTablet ? Math.min(SCREEN_W, contentMaxWidth) : SCREEN_W;
 // Chart card sits inside scroll content (paddingH lg) and has its own padding md.
 const SCROLL_H_PAD = spacing.lg;
 const CARD_H_PAD = spacing.md;
-const CHART_W = SCREEN_W - (SCROLL_H_PAD + CARD_H_PAD) * 2;
+const CHART_W = effectiveW - (SCROLL_H_PAD + CARD_H_PAD) * 2;
 const CHART_H = 200;
 const CHART_TOP_PAD = 8;
 const CHART_BOTTOM_PAD = 28;

@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!-- App icon: simplified for small sizes, no text -->
+  <defs>
+    <radialGradient id="iconBg" cx="50%" cy="42%" r="58%">
+      <stop offset="0%" stop-color="#264838"/>
+      <stop offset="100%" stop-color="#1B3A2D"/>
+    </radialGradient>
+    <linearGradient id="iconGold" x1="20%" y1="10%" x2="80%" y2="90%">
+      <stop offset="0%" stop-color="#E8D06A"/>
+      <stop offset="35%" stop-color="#C9A84C"/>
+      <stop offset="100%" stop-color="#A8873A"/>
+    </linearGradient>
+    <radialGradient id="iconGlow" cx="50%" cy="48%" r="35%">
+      <stop offset="0%" stop-color="rgba(201,168,76,0.3)"/>
+      <stop offset="100%" stop-color="rgba(201,168,76,0)"/>
+    </radialGradient>
+    <radialGradient id="iconHL" cx="40%" cy="35%" r="35%">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.35)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+    </radialGradient>
+    <filter id="iconShadow">
+      <feDropShadow dx="0" dy="6" stdDeviation="12" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Rounded square background (Android adaptive icon safe zone) -->
+  <rect x="0" y="0" width="1024" height="1024" rx="224" ry="224" fill="url(#iconBg)"/>
+
+  <!-- Decorative ring (subtle tasbih suggestion) -->
+  <circle cx="512" cy="480" r="340" fill="none" stroke="#2C4D3C" stroke-width="3" stroke-dasharray="12 18" opacity="0.4"/>
+
+  <!-- Glow -->
+  <circle cx="512" cy="460" r="200" fill="url(#iconGlow)"/>
+
+  <!-- Central bead -->
+  <ellipse cx="512" cy="450" rx="130" ry="150" fill="url(#iconGold)" filter="url(#iconShadow)"/>
+  <ellipse cx="498" cy="426" rx="80" ry="92" fill="url(#iconHL)"/>
+
+  <!-- String hole -->
+  <ellipse cx="512" cy="450" rx="14" ry="20" fill="none" stroke="#A8873A" stroke-width="2.5" opacity="0.5"/>
+
+  <!-- String threads -->
+  <line x1="512" y1="285" x2="512" y2="300" stroke="#C9A84C" stroke-width="3.5" stroke-linecap="round" opacity="0.6"/>
+  <line x1="512" y1="600" x2="512" y2="615" stroke="#C9A84C" stroke-width="3.5" stroke-linecap="round" opacity="0.6"/>
+
+  <!-- Small decorative beads (3 on each side for tasbih feel) -->
+  <circle cx="512" cy="680" r="18" fill="#C9A84C" opacity="0.5"/>
+  <circle cx="470" cy="710" r="12" fill="#C9A84C" opacity="0.3"/>
+  <circle cx="554" cy="710" r="12" fill="#C9A84C" opacity="0.3"/>
+
+  <!-- Arabic text at bottom -->
+  <text x="512" y="820" text-anchor="middle" font-family="'Amiri', 'Traditional Arabic', 'Noto Naskh Arabic', serif" font-size="88" font-weight="700" fill="#C9A84C" letter-spacing="3">
+    حَبّة
+  </text>
+</svg>

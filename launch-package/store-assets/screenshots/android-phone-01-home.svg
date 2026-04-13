@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920" width="1080" height="1920">
+  <!-- Android Phone Screenshot - Home Screen (1080x1920) -->
+  <defs>
+    <clipPath id="apClip">
+      <rect x="0" y="0" width="1080" height="1920" rx="40"/>
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#apClip)">
+    <!-- Background -->
+    <rect width="1080" height="1920" fill="#1B3A2D"/>
+
+    <!-- Android status bar -->
+    <rect x="0" y="0" width="1080" height="80" fill="rgba(0,0,0,0.15)"/>
+    <text x="40" y="55" font-family="Roboto, system-ui" font-size="32" font-weight="500" fill="#fff">12:30</text>
+    <text x="1040" y="55" text-anchor="end" font-family="Roboto, system-ui" font-size="26" fill="#fff">🔋 📶</text>
+
+    <!-- Header Row -->
+    <g transform="translate(56, 130)">
+      <text x="0" y="0" font-family="Roboto, system-ui" font-size="36" font-weight="500" fill="#A0B4AA" text-anchor="end" transform="translate(968, 0)">صباح الخير</text>
+      <text x="968" y="80" font-family="'Amiri', serif" font-size="88" font-weight="700" fill="#C9A84C" text-anchor="end">حَبّة</text>
+
+      <!-- Date pill -->
+      <rect x="0" y="-16" width="280" height="120" rx="40" fill="#243F32" stroke="#2C4D3C" stroke-width="2"/>
+      <text x="140" y="36" text-anchor="middle" font-family="Roboto, system-ui" font-size="36" font-weight="700" fill="#C9A84C">الأحد</text>
+      <text x="140" y="78" text-anchor="middle" font-family="Roboto, system-ui" font-size="28" fill="#A0B4AA">١٣ أبريل</text>
+    </g>
+
+    <!-- Streak + Today Card -->
+    <rect x="56" y="360" width="968" height="220" rx="48" fill="#243F32" stroke="#C9A84C" stroke-width="3"/>
+    <!-- Streak side -->
+    <text x="140" y="472" font-size="84">🔥</text>
+    <text x="240" y="470" font-family="Roboto, system-ui" font-size="68" font-weight="800" fill="#C9A84C">٧</text>
+    <text x="240" y="520" font-family="Roboto, system-ui" font-size="30" fill="#6B8C7E">يوم متواصل</text>
+    <!-- Divider -->
+    <line x1="540" y1="400" x2="540" y2="540" stroke="#2C4D3C" stroke-width="2"/>
+    <!-- Today side -->
+    <text x="968" y="475" text-anchor="end" font-family="Roboto, system-ui" font-size="62" font-weight="700" fill="#fff">٢٣١</text>
+    <text x="968" y="520" text-anchor="end" font-family="Roboto, system-ui" font-size="28" fill="#6B8C7E">تسبيحات اليوم</text>
+    <text x="968" y="556" text-anchor="end" font-family="Roboto, system-ui" font-size="28" font-weight="600" fill="#C9A84C">١٢ دقيقة</text>
+
+    <!-- Section header -->
+    <circle cx="72" cy="640" r="8" fill="#C9A84C"/>
+    <text x="100" y="648" font-family="'Amiri', serif" font-size="34" font-weight="600" fill="#A0B4AA" letter-spacing="1">اذكر الله</text>
+
+    <!-- Dhikr Cards -->
+    <!-- Card 1 -->
+    <rect x="56" y="690" width="968" height="180" rx="40" fill="#243F32" stroke="#2C4D3C" stroke-width="2"/>
+    <text x="968" y="772" text-anchor="end" font-family="'Amiri', serif" font-size="54" font-weight="600" fill="#fff">سُبْحَانَ اللَّهِ</text>
+    <text x="968" y="826" text-anchor="end" font-family="Roboto, system-ui" font-size="30" fill="#6B8C7E">Subhan Allah</text>
+    <rect x="100" y="756" width="120" height="60" rx="30" fill="rgba(201,168,76,0.15)"/>
+    <text x="160" y="796" text-anchor="middle" font-family="Roboto, system-ui" font-size="32" font-weight="600" fill="#C9A84C">×٣٣</text>
+
+    <!-- Card 2 -->
+    <rect x="56" y="888" width="968" height="180" rx="40" fill="#243F32" stroke="#2C4D3C" stroke-width="2"/>
+    <text x="968" y="970" text-anchor="end" font-family="'Amiri', serif" font-size="54" font-weight="600" fill="#fff">الْحَمْدُ لِلَّهِ</text>
+    <text x="968" y="1024" text-anchor="end" font-family="Roboto, system-ui" font-size="30" fill="#6B8C7E">Alhamdulillah</text>
+    <rect x="100" y="954" width="120" height="60" rx="30" fill="rgba(201,168,76,0.15)"/>
+    <text x="160" y="994" text-anchor="middle" font-family="Roboto, system-ui" font-size="32" font-weight="600" fill="#C9A84C">×٣٣</text>
+
+    <!-- Card 3 -->
+    <rect x="56" y="1086" width="968" height="180" rx="40" fill="#243F32" stroke="#2C4D3C" stroke-width="2"/>
+    <text x="968" y="1168" text-anchor="end" font-family="'Amiri', serif" font-size="54" font-weight="600" fill="#fff">اللَّهُ أَكْبَرُ</text>
+    <text x="968" y="1222" text-anchor="end" font-family="Roboto, system-ui" font-size="30" fill="#6B8C7E">Allahu Akbar</text>
+    <rect x="100" y="1152" width="120" height="60" rx="30" fill="rgba(201,168,76,0.15)"/>
+    <text x="160" y="1192" text-anchor="middle" font-family="Roboto, system-ui" font-size="32" font-weight="600" fill="#C9A84C">×٣٣</text>
+
+    <!-- Card 4 -->
+    <rect x="56" y="1284" width="968" height="180" rx="40" fill="#243F32" stroke="#2C4D3C" stroke-width="2"/>
+    <text x="968" y="1366" text-anchor="end" font-family="'Amiri', serif" font-size="54" font-weight="600" fill="#fff">لَا إِلَٰهَ إِلَّا اللَّهُ</text>
+    <text x="968" y="1420" text-anchor="end" font-family="Roboto, system-ui" font-size="30" fill="#6B8C7E">La ilaha illallah</text>
+    <rect x="100" y="1350" width="100" height="60" rx="30" fill="rgba(201,168,76,0.15)"/>
+    <text x="150" y="1390" text-anchor="middle" font-family="Roboto, system-ui" font-size="30" font-weight="600" fill="#C9A84C">حر</text>
+
+    <!-- Add custom button -->
+    <rect x="56" y="1490" width="968" height="110" rx="40" fill="transparent" stroke="#C9A84C" stroke-width="3" stroke-dasharray="12 12"/>
+    <text x="540" y="1558" text-anchor="middle" font-family="Roboto, system-ui" font-size="36" font-weight="600" fill="#C9A84C">+ أضف ذكرًا مخصصًا</text>
+
+    <!-- Bottom Tab Bar -->
+    <rect x="0" y="1740" width="1080" height="180" fill="#243F32"/>
+    <line x1="0" y1="1740" x2="1080" y2="1740" stroke="#2C4D3C" stroke-width="2"/>
+    <!-- Home (active) -->
+    <text x="180" y="1810" text-anchor="middle" font-size="46">📿</text>
+    <text x="180" y="1858" text-anchor="middle" font-family="Roboto, system-ui" font-size="24" font-weight="600" fill="#C9A84C">حَبّة</text>
+    <circle cx="180" cy="1884" r="6" fill="#C9A84C"/>
+    <!-- History -->
+    <text x="540" y="1810" text-anchor="middle" font-size="46" opacity="0.5">📊</text>
+    <text x="540" y="1858" text-anchor="middle" font-family="Roboto, system-ui" font-size="24" fill="#6B8C7E">السجل</text>
+    <!-- Settings -->
+    <text x="900" y="1810" text-anchor="middle" font-size="46" opacity="0.5">⚙️</text>
+    <text x="900" y="1858" text-anchor="middle" font-family="Roboto, system-ui" font-size="24" fill="#6B8C7E">الإعدادات</text>
+  </g>
+
+  <rect x="0" y="0" width="1080" height="1920" rx="40" fill="none" stroke="#222" stroke-width="2"/>
+</svg>

@@ -21,6 +21,7 @@ import { useSettingsStore } from '../stores/useSettingsStore';
 import { spacing } from '../theme/spacing';
 import { typography } from '../theme/typography';
 import { formatCount, formatDuration } from '../utils/formatters';
+import { isTablet, contentMaxWidth, ms } from '../utils/responsive';
 import type { RootStackParamList } from '../navigation/types';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
@@ -186,6 +187,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: spacing.lg,
+    maxWidth: isTablet ? contentMaxWidth : undefined,
+    alignSelf: isTablet ? 'center' as const : undefined,
+    width: isTablet ? '100%' as any : undefined,
   },
   glowOrb: {
     position: 'absolute',

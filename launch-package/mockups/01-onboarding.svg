@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 844" width="390" height="844">
+  <!-- iPhone 14 frame - Onboarding Screen -->
+  <defs>
+    <linearGradient id="onbGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E0C564"/>
+      <stop offset="100%" stop-color="#A8873A"/>
+    </linearGradient>
+    <radialGradient id="onbGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="rgba(201,168,76,0.2)"/>
+      <stop offset="100%" stop-color="rgba(201,168,76,0)"/>
+    </radialGradient>
+    <clipPath id="screenClip">
+      <rect x="0" y="0" width="390" height="844" rx="44"/>
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#screenClip)">
+    <!-- Background -->
+    <rect width="390" height="844" fill="#1B3A2D"/>
+
+    <!-- Status bar area -->
+    <rect x="0" y="0" width="390" height="54" fill="transparent"/>
+    <text x="35" y="36" font-family="SF Pro, system-ui" font-size="15" font-weight="600" fill="#fff">9:41</text>
+    <!-- Notch -->
+    <rect x="122" y="0" width="146" height="34" rx="17" fill="#000"/>
+
+    <!-- Large central bead illustration -->
+    <circle cx="195" cy="320" r="140" fill="url(#onbGlow)"/>
+    <ellipse cx="195" cy="310" rx="80" ry="92" fill="url(#onbGold)"/>
+    <ellipse cx="186" cy="294" rx="50" ry="56" fill="rgba(255,255,255,0.15)"/>
+    <ellipse cx="195" cy="310" rx="10" ry="14" fill="none" stroke="#A8873A" stroke-width="2" opacity="0.5"/>
+
+    <!-- Dashed tasbih ring -->
+    <circle cx="195" cy="310" r="150" fill="none" stroke="#2C4D3C" stroke-width="2" stroke-dasharray="8 14" opacity="0.4"/>
+
+    <!-- Small beads on the ring -->
+    <circle cx="195" cy="160" r="8" fill="#C9A84C" opacity="0.5"/>
+    <circle cx="303" cy="210" r="7" fill="#C9A84C" opacity="0.4"/>
+    <circle cx="338" cy="310" r="7" fill="#C9A84C" opacity="0.35"/>
+    <circle cx="303" cy="410" r="7" fill="#C9A84C" opacity="0.4"/>
+    <circle cx="195" cy="460" r="8" fill="#C9A84C" opacity="0.5"/>
+    <circle cx="87" cy="410" r="7" fill="#C9A84C" opacity="0.4"/>
+    <circle cx="52" cy="310" r="7" fill="#C9A84C" opacity="0.35"/>
+    <circle cx="87" cy="210" r="7" fill="#C9A84C" opacity="0.4"/>
+
+    <!-- App name -->
+    <text x="195" y="560" text-anchor="middle" font-family="'Amiri', serif" font-size="52" font-weight="700" fill="#C9A84C">
+      حَبّة
+    </text>
+
+    <!-- Tagline -->
+    <text x="195" y="605" text-anchor="middle" font-family="SF Pro, system-ui" font-size="18" fill="#A0B4AA" letter-spacing="2">
+      Feel every bead
+    </text>
+
+    <!-- Arabic tagline -->
+    <text x="195" y="640" text-anchor="middle" font-family="'Amiri', serif" font-size="20" fill="#6B8C7E">
+      اشعر بكل حبّة
+    </text>
+
+    <!-- CTA Button -->
+    <rect x="60" y="710" width="270" height="56" rx="28" fill="#C9A84C"/>
+    <text x="195" y="745" text-anchor="middle" font-family="'Amiri', serif" font-size="20" font-weight="700" fill="#1B3A2D">
+      ابدأ رحلتك
+    </text>
+
+    <!-- Page dots -->
+    <circle cx="180" cy="790" r="4" fill="#C9A84C"/>
+    <circle cx="195" cy="790" r="4" fill="#2C4D3C"/>
+    <circle cx="210" cy="790" r="4" fill="#2C4D3C"/>
+  </g>
+
+  <!-- Phone frame border -->
+  <rect x="0" y="0" width="390" height="844" rx="44" fill="none" stroke="#333" stroke-width="2"/>
+</svg>

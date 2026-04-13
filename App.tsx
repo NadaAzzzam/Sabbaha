@@ -11,6 +11,7 @@ import { navigationUiFontFamily } from './src/theme/typography';
 import { cancelReminder, scheduleReminder } from './src/utils/notifications';
 import { useHistoryStore } from './src/stores/useHistoryStore';
 import { useSessionStore, getSessionActiveDurationMs } from './src/stores/useSessionStore';
+import { initAdMob } from './src/ads/initAdMob';
 
 // Initialize i18n before first render
 const settings = useSettingsStore.getState();
@@ -103,6 +104,15 @@ const ThemedNavContainer = () => {
 
 const AppInner = () => {
   useReminderScheduler();
+
+  useEffect(() => {
+    initAdMob().catch(err => {
+      if (__DEV__) {
+        console.warn('AdMob init failed', err);
+      }
+    });
+  }, []);
+
   return <ThemedNavContainer />;
 };
 

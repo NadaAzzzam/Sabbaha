@@ -22,6 +22,7 @@ import {
 import { useHistoryStore } from '../stores/useHistoryStore';
 import { spacing, radius } from '../theme/spacing';
 import { typography } from '../theme/typography';
+import { isTablet, contentMaxWidth } from '../utils/responsive';
 import i18n from '../i18n';
 import { requestNotificationPermission } from '../utils/notifications';
 
@@ -255,12 +256,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.lg,
     paddingBottom: spacing.md,
+    ...(isTablet ? { maxWidth: contentMaxWidth, alignSelf: 'center' as const, width: '100%' as any } : {}),
   },
   section: {
     marginHorizontal: spacing.lg,
     borderRadius: radius.lg,
     borderWidth: 1,
     overflow: 'hidden',
+    ...(isTablet ? { maxWidth: contentMaxWidth, alignSelf: 'center' as const } : {}),
   },
   row: {
     flexDirection: 'row',
@@ -292,5 +295,6 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     borderWidth: 1,
     alignItems: 'center',
+    ...(isTablet ? { maxWidth: contentMaxWidth, alignSelf: 'center' as const } : {}),
   },
 });
