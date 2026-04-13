@@ -4,7 +4,8 @@ buildscript {
         compileSdkVersion = 36
         targetSdkVersion = 35
         ndkVersion = "27.1.12297006"
-        kotlinVersion = "2.1.0"
+        // Align with RN / AGP toolchain so AsyncStorage KSP matches (was 2.1.0 + KSP 1.0.28 vs Kotlin 2.1.20 → ICE).
+        kotlinVersion = "2.1.20"
     }
     repositories {
         google()
@@ -76,3 +77,12 @@ subprojects { sub ->
 }
 
 apply plugin: "com.facebook.react.rootproject"
+
+// @react-native-async-storage/async-storage v3+ ships `storage-android` only in this local Maven repo (not on Maven Central).
+allprojects {
+    repositories {
+        maven {
+            url = uri("${rootProject.projectDir}/../node_modules/@react-native-async-storage/async-storage/android/local_repo")
+        }
+    }
+}

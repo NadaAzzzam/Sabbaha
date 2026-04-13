@@ -7,6 +7,7 @@
     "android:apk:release": "node scripts/gradle.js assembleRelease",
     "android:install:release": "node scripts/gradle.js installRelease",
     "android:reset-build": "node scripts/android-reset-build.js",
+    "android:rebuild": "node scripts/gradle.js clean && node scripts/gradle.js assembleDebug",
     "gradle": "node scripts/gradle.js",
     "gradle:stop": "node scripts/gradle-stop.js",
     "gradle:clear-kotlin-cache": "node scripts/gradle-clear-kotlin-dsl-cache.js",
